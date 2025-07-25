@@ -11,7 +11,7 @@
 - **Functions:** f: A → B, λ
 - **Assignment:** ←
 - **Definition:** ≜
-- **Structure:** (),[]，{},⟨⟩
+- **Structure:** (),[],{},⟨⟩
 
 ### Effect Extensions (11 new glyphs)
 - **↯** Raise exception
@@ -175,6 +175,12 @@ query ≜ λtable∈Database: ∀row∈table: validateUser(row) ↴ {
 - **Unicode Normalization:** NFC on ingest, reject mixed forms
 - **Symbol Input:** Cross-platform keymap (Ctrl+Alt+g → γ) + ASCII escapes (\gamma → γ)
 - **Semicolon handling:** Require explicit `;` everywhere except before `}`
+- **Comments:** `--` for single-line comments (to end of line), `{- ... -}` for multi-line comments (nestable)
+- **String Literals:** 
+  - Standard strings: `"..."` with escape sequences (`\n`, `\t`, `\\`, `\"`, `\u{XXXXXX}`)
+  - Raw strings: `"""..."""` for multi-line, no escape processing
+- **Path Literals:** Both `🖫"path"` and `\path"path"` supported for compatibility
+- **Number Literals:** Decimal (`123`, `3.14`), hex (`0x1A`), binary (`0b1101`), with optional type suffixes later
 
 ### Operator Precedence Table
 | Level | Operators | Associativity |

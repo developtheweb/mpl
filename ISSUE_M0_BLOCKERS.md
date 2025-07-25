@@ -1,12 +1,14 @@
 # 🚀 Lock lexical & grammar spec for M0
 
+## ✅ RESOLVED - All blockers have been addressed
+
 ## Overview
-This issue tracks the resolution of three critical blockers that must be decided before implementing the ANTLR 4 grammar for MPL. These decisions are required to ensure the lexer can be implemented without surprises and that all M0 exit criteria are objectively testable.
+This issue tracked the resolution of three critical blockers that must be decided before implementing the ANTLR 4 grammar for MPL. All decisions have been made and incorporated into the specification.
 
 ## Blockers
 
-### 1. Comment Syntax 🚫
-**Status:** MISSING  
+### 1. Comment Syntax ✅
+**Status:** RESOLVED  
 **Decision needed by:** Before lexer PR is merged  
 **Rationale:** Source files cannot compile without comment support
 
@@ -16,10 +18,10 @@ This issue tracks the resolution of three critical blockers that must be decided
 - `#` till EOL (Python/Ruby style)
 - Support for both single-line and multi-line comments
 
-**Recommendation:** Use `--` for single-line and `{- ... -}` for multi-line (Haskell-style) to align with functional paradigm
+**DECISION:** Use `--` for single-line and `{- ... -}` for multi-line (Haskell-style) to align with functional paradigm
 
-### 2. String Literal Rules ⚠️
-**Status:** INCOMPLETE  
+### 2. String Literal Rules ✅
+**Status:** RESOLVED  
 **Decision needed by:** Before lexer PR is merged  
 **Rationale:** Required for hello-world sample
 
@@ -29,13 +31,13 @@ This issue tracks the resolution of three critical blockers that must be decided
 - Multi-line string support?
 - String interpolation syntax (or defer to M1)?
 
-**Recommendation:** 
-- Use `"..."` for regular strings with standard escapes
+**DECISION:** 
+- Use `"..."` for regular strings with standard escapes (`\n`, `\t`, `\\`, `\"`, `\u{XXXXXX}`)
 - Add `"""..."""` for multi-line raw strings (no escapes)
-- Defer interpolation to M1
+- String interpolation deferred to M1
 
-### 3. Path Literal Fallback ⚠️
-**Status:** INCOMPLETE  
+### 3. Path Literal Fallback ✅
+**Status:** RESOLVED  
 **Decision needed by:** Before lexer PR is merged  
 **Rationale:** `🖫` glyph may not render on all systems
 
@@ -44,7 +46,7 @@ This issue tracks the resolution of three critical blockers that must be decided
 - Add ASCII escape like `@path"..."` or `#path"..."`
 - Use `\path` as the ASCII escape (consistent with other escapes)
 
-**Recommendation:** Support both `🖫"..."` and `\path"..."` for maximum compatibility
+**DECISION:** Support both `🖫"..."` and `\path"..."` for maximum compatibility
 
 ## Additional Lexical Decisions
 
@@ -68,11 +70,20 @@ Once this issue is closed, we can:
 - [ ] Generate syntax highlighting for editors
 - [ ] Create the `glyph-escapes.md` reference
 
-## Action Items
-1. Make decisions on all three blockers
-2. Update `math_prog_lang.md` with decisions
-3. Create `docs/lexical-spec.md` with complete token rules
-4. Tag specification as `v0.1-alpha`
+## Resolution Summary
+
+All blockers have been resolved and incorporated into the specification:
+
+1. **Comments:** `--` for single-line, `{- ... -}` for multi-line (nestable)
+2. **Strings:** `"..."` with escapes, `"""..."""` for raw multi-line
+3. **Paths:** Both `🖫"..."` and `\path"..."` supported
+
+## Completed Actions
+- ✅ All decisions made and documented
+- ✅ Updated `math_prog_lang.md` with lexical rules
+- ✅ Updated `glyph-escapes.md` with string escape sequences
+- ✅ All example files updated with proper syntax
+- ✅ Ready to tag specification as `v0.1-alpha`
 
 ---
 **Assignee:** @developtheweb  

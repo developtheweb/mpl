@@ -133,6 +133,26 @@ This document provides the authoritative mapping between ASCII escape sequences 
 | `\bool` or `\B` | U+1D539 | 𝔹 | Booleans |
 | `\bot` | U+22A5 | ⊥ | Bottom type |
 
+## String Escape Sequences
+
+String literals in MPL support the following escape sequences within double-quoted strings:
+
+| Escape Sequence | Character | Description |
+|----------------|-----------|-------------|
+| `\\` | `\` | Backslash |
+| `\"` | `"` | Double quote |
+| `\n` | LF | Line feed (newline) |
+| `\r` | CR | Carriage return |
+| `\t` | TAB | Horizontal tab |
+| `\0` | NUL | Null character |
+| `\u{XXXXXX}` | Unicode | Unicode code point (1-6 hex digits) |
+
+Examples:
+- `"Hello\nWorld"` - String with newline
+- `"Path: \"C:\\Users\""` - Escaped quotes and backslashes
+- `"Unicode: \u{1F600}"` - Unicode emoji 😀
+- `"""Raw string - no \n escapes"""` - Raw multi-line string
+
 ## Usage Notes
 
 1. **Input methods:**

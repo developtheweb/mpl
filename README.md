@@ -1,5 +1,8 @@
 # Mathematical Programming Language (MPL)
 
+![Version](https://img.shields.io/badge/version-0.1--alpha-blue)
+![Status](https://img.shields.io/badge/status-pre--M0-orange)
+
 A programming language that maintains cognitive universality while supporting all modern programming paradigms through mathematical notation.
 
 ## Quick Start
@@ -20,10 +23,18 @@ A programming language that maintains cognitive universality while supporting al
 
 1. ✅ Language specification consolidated
 2. ✅ Pre-M0 audit completed
-3. 🚧 Resolve lexical blockers (see ISSUE_M0_BLOCKERS.md)
+3. ✅ Lexical blockers resolved (see [ISSUE_M0_BLOCKERS.md](ISSUE_M0_BLOCKERS.md))
 4. ⏳ Implement ANTLR 4 grammar
 5. ⏳ Create test suite (500 LOC)
 6. ⏳ Achieve M0 exit criteria
+
+## M0 Exit Criteria
+
+- [ ] Lexer round-trips every glyph via escape and direct entry
+- [ ] Parser accepts all files in `examples/`
+- [ ] `grmtools` (or ANTLR diagnostics) reports **0** ambiguities
+- [ ] Fuzz seed (10k random tokens) yields no segfault
+- [ ] Pretty-printer emits code that re-parses into identical AST
 
 ## Contact
 

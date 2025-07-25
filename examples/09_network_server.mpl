@@ -1,9 +1,10 @@
+-- Network server with connection handling
 server ≜ λport: 〔
-    socket ← bind(port) ⊕
-    ∀request: (
-        data ← ↽_socket request
-        response ← processRequest(data)
+    socket ← bind(port) ⊕;
+    ∀request∈acceptLoop(socket): (
+        data ← ↽_socket request;
+        response ← processRequest(data);
         ⇀_socket response
     ) ‖ handleNext()
-    socket ⊖
-〕
+    {- socket ⊖ happens automatically at end of 〔〕 -}
+〕;
