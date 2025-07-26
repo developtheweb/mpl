@@ -1,0 +1,14 @@
+# This file defines who owns what in this repository
+# These owners will be requested for review when someone opens a pull request
+
+# Global owners for everything
+* @developtheweb
+
+# Grammar and language design
+*.g4 @developtheweb
+*.mpl @developtheweb
+
+# Documentation
+*.md @developtheweb
+/docs/ @developtheweb
+/whitepaper/ @developtheweb
