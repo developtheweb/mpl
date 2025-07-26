@@ -1,0 +1,28 @@
+# Authors
+
+Mathematical Programming Language (MPL) was created and is maintained by:
+
+## Project Creator & Lead Maintainer
+
+* **Reverend Steven Milanese** (@developtheweb) - Project creator, language design, core implementation
+
+## Contributors
+
+Contributors will be added here as they make significant contributions to the project.
+
+To be listed here, contributors should have:
+- Made substantial code contributions, or
+- Significantly improved documentation, or
+- Contributed major features or bug fixes
+
+## Special Thanks
+
+- All the educators and students who believe in cognitive justice in programming education
+- The open source community for tools and inspiration
+
+---
+
+For a complete list of contributors, see the git log:
+```
+git log --format='%aN' | sort -u
+```

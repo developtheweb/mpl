@@ -1,0 +1,13 @@
+Level,Operators,Associativity,Description
+9,function application,left,Function call f(x) or f x
+8,"↯ ✎ ? ⧈ ⏲ (prefix)",right,Unary prefix operators
+7,∘,left,Function composition
+6,× ÷ ∗,left,Multiplication and division
+5,+ -,left,Addition and subtraction
+4,= ≠ < > ≤ ≥ ≈ ∼,non-associative,Comparison operators
+3,∧,left,Logical AND
+2,∨,left,Logical OR
+1,⟹,right,Implication
+0,←,right,Assignment
+-1,‖,left,Parallel composition
+-2,;,left,Statement sequencing

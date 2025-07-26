@@ -1,0 +1,78 @@
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Universal settings
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+# Java files
+[*.java]
+indent_size = 4
+continuation_indent_size = 8
+
+# ANTLR grammar files
+[*.g4]
+indent_size = 4
+
+# MPL source files
+[*.mpl]
+indent_size = 2
+# Ensure Unicode is preserved
+charset = utf-8
+
+# Markdown files
+[*.md]
+trim_trailing_whitespace = false
+indent_size = 2
+
+# YAML files
+[*.{yml,yaml}]
+indent_size = 2
+
+# JSON files
+[*.json]
+indent_size = 2
+
+# XML files
+[*.xml]
+indent_size = 2
+
+# Gradle files
+[*.gradle]
+indent_size = 4
+
+# Shell scripts
+[*.sh]
+indent_size = 2
+
+# Batch files
+[*.bat]
+end_of_line = crlf
+indent_size = 2
+
+# Makefiles
+[Makefile]
+indent_style = tab
+
+# Git config files
+[.git*]
+indent_size = 2
+
+# GitHub Actions
+[.github/workflows/*.yml]
+indent_size = 2
+
+# LaTeX files (for whitepaper)
+[*.tex]
+indent_size = 2
+
+# Properties files
+[*.properties]
+indent_size = 4

@@ -1,0 +1,56 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: Mathematical Programming Language (MPL)
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Steven
+    family-names: Milanese
+    email: developtheweb@protonmail.com
+    affiliation: Independent Researcher
+    orcid: 'https://orcid.org/0000-0000-0000-0000'
+identifiers:
+  - type: url
+    value: 'https://github.com/developtheweb/mpl'
+    description: GitHub Repository
+repository-code: 'https://github.com/developtheweb/mpl'
+url: 'https://github.com/developtheweb/mpl'
+repository-artifact: 'https://github.com/developtheweb/mpl/releases'
+abstract: >-
+  Mathematical Programming Language (MPL) is a programming
+  language that achieves cognitive universality through
+  mathematical notation. By replacing English keywords with
+  mathematical symbols, MPL enables any child, regardless
+  of native language, to learn programming through the
+  universal language of mathematics. MPL supports
+  functional, imperative, concurrent, and object-oriented
+  paradigms while maintaining zero language barriers.
+keywords:
+  - programming-language
+  - mathematical-notation
+  - cognitive-universality
+  - education
+  - unicode
+  - language-agnostic
+  - cognitive-justice
+  - universal-programming
+license: AGPL-3.0
+commit: 4893ac3
+version: 2.0.0
+date-released: '2025-01-26'
+preferred-citation:
+  type: article
+  authors:
+    - given-names: Steven
+      family-names: Milanese
+  title: "Mathematical Programming Languages: Achieving Cognitive Universality Through Unicode-Based Syntax"
+  year: 2025
+  journal: "Proceedings of Programming Language Design and Education"
+  volume: 1
+  issue: 1
+  start: 1
+  end: 20

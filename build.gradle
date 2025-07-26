@@ -1,0 +1,48 @@
+plugins {
+    id 'java'
+    id 'antlr'
+}
+
+group = 'com.mpl'
+version = '0.1-alpha'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    antlr 'org.antlr:antlr4:4.13.1'
+    implementation 'org.antlr:antlr4-runtime:4.13.1'
+    
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.hamcrest:hamcrest:2.2'
+}
+
+generateGrammarSource {
+    maxHeapSize = "64m"
+    arguments += ["-visitor", "-listener", "-package", "com.mpl.parser"]
+    outputDirectory = file("${project.buildDir}/generated-src/antlr/main/com/mpl/parser")
+}
+
+compileJava.dependsOn generateGrammarSource
+
+sourceSets {
+    main {
+        java {
+            srcDirs += "${project.buildDir}/generated-src/antlr/main"
+        }
+    }
+}
+
+test {
+    testLogging {
+        events "passed", "skipped", "failed"
+        exceptionFormat "full"
+    }
+}
+
+task parseExamples(type: JavaExec, dependsOn: classes) {
+    mainClass = 'com.mpl.test.ParseExamples'
+    classpath = sourceSets.main.runtimeClasspath
+    args = ['examples']
+}

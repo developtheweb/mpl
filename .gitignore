@@ -1,0 +1,130 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+# Eclipse
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+*.swp
+*.swo
+.directory
+
+# ANTLR
+.antlr/
+*.tokens
+*.interp
+**/generated-src/
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+hs_err_pid*
+
+# Logs
+*.log
+logs/
+
+# Package Files
+*.tar.gz
+*.rar
+*.zip
+*.7z
+*.dmg
+*.iso
+
+# Build outputs
+target/
+dist/
+tmp/
+temp/
+
+# Test outputs
+test-results/
+test-output/
+*.exec
+*.coverage
+
+# Documentation build
+docs/_build/
+docs/_site/
+*.pdf
+!whitepaper/*.pdf
+
+# IDE specific
+.nb-gradle/
+.metadata
+.recommenders
+
+# MPL specific
+*.mpl.compiled
+*.mpl.cache
+.mpl/
+
+# Temporary files
+*.tmp
+*.bak
+*~.nib
+
+# Security
+*.key
+*.pem
+*.p12
+*.pfx
+*.jks
+.env
+.env.local
+.env.*.local
+
+# User-specific files
+local.properties
+
+# Claude-specific (not committed)
+CLAUDE.md
+
+# Gradle wrapper (DO NOT IGNORE)
+!gradle/
+!gradlew
+!gradlew.bat
