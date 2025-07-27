@@ -43,9 +43,6 @@ In a world where 80% of humanity doesn't speak English, why should programming�
 
 ## 🎯 The Fatima test
 
-<div align="center">
-<img src="docs/images/fatima-test.png" alt="The Fatima Test illustrated" width="600">
-</div>
 
 > "Why do I need to know English to write a program?" — Fatima, 10 years old, Cairo
 
@@ -121,9 +118,24 @@ print("Hello, World!")
 ### For everyone
 Write code using mathematical symbols instead of English words. It's that simple.
 
-<div align="center">
-<img src="docs/images/transformation-pipeline.gif" alt="MPL transformation pipeline" width="800">
-</div>
+```
+┌─────────────────────────────────────────────┐
+│          Mathematical Notation              │
+│         λn: n > 0 ? n × fact(n-1) : 1      │
+└────────────────┬───────────────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────────────────┐
+│           Unicode Input                     │
+│    (Visual palette, voice, keyboard)        │
+└────────────────┬───────────────────────────┘
+                 │
+                 ▼
+┌─────────────────────────────────────────────┐
+│          ANTLR 4 Parser                     │
+│         Lexer → Parser → AST                │
+└─────────────────────────────────────────────┘
+```
 
 ### Five ways to write λ (lambda)
 
@@ -169,9 +181,15 @@ Input Methods → Unicode Stream → ANTLR 4 Lexer → AST →
 ### 🎨 Multi-modal input
 **Meet learners where they are**
 
-<div align="center">
-<img src="docs/images/input-methods.png" alt="Multiple input methods" width="700">
-</div>
+```
+┌─────────────┬─────────────┬─────────────┬─────────────┐
+│   Visual    │    Voice    │  Keyboard   │ Handwriting │
+│   Palette   │    Input    │  Shortcuts  │ Recognition │
+├─────────────┼─────────────┼─────────────┼─────────────┤
+│  Click λ    │ Say "lambda"│ Type \lambda│  Draw λ     │
+│  from menu  │ in any lang │ → λ appears │  on screen  │
+└─────────────┴─────────────┴─────────────┴─────────────┘
+```
 
 - **Visual palette** — Click symbols like emoji
 - **Voice input** — Speak in your native language
@@ -346,9 +364,6 @@ Sometimes the idea is more important than the implementation. By sharing MPL now
 ## 🏗️ Technical architecture
 
 ### Grammar specification
-<div align="center">
-<img src="docs/images/grammar-railroad.svg" alt="Grammar railroad diagram" width="800">
-</div>
 
 - **70+ operators** across 15 categories
 - **Zero ambiguities** in ANTLR 4 grammar
