@@ -20,7 +20,8 @@ dependencies {
 
 generateGrammarSource {
     maxHeapSize = "64m"
-    arguments += ["-visitor", "-listener", "-package", "com.mpl.parser"]
+    // -Werror: any ANTLR warning (e.g. 184, token shadowing) fails the build
+    arguments += ["-visitor", "-listener", "-Werror", "-package", "com.mpl.parser"]
     outputDirectory = file("${project.buildDir}/generated-src/antlr/main/com/mpl/parser")
 }
 
@@ -28,6 +29,11 @@ compileJava.dependsOn generateGrammarSource
 
 sourceSets {
     main {
+        antlr {
+            // The Gradle ANTLR plugin defaults to src/main/antlr; the grammar
+            // lives in src/main/antlr4 (Maven layout).
+            srcDirs = ['src/main/antlr4']
+        }
         java {
             srcDirs += "${project.buildDir}/generated-src/antlr/main"
         }

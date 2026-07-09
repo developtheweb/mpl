@@ -1,8 +1,7 @@
 grammar MPL;
 
-@header {
-package com.mpl.parser;
-}
+// The Java package comes from the '-package com.mpl.parser' argument in
+// build.gradle. An @header package declaration here would duplicate it.
 
 // ============================================================================
 // PARSER RULES
@@ -31,7 +30,15 @@ parallelExpr
     ;
 
 assignExpr
-    : impliesExpr (LEFTARROW assignExpr)?   // Level 0: Assignment (right-assoc)
+    : condExpr (LEFTARROW assignExpr)?      // Level 0: Assignment (right-assoc)
+    ;
+
+// Guarded alternatives: (condition ⟹ result) | fallback
+// This is the canonical conditional form. It lives in the precedence chain
+// (below assignment, above implication) instead of being a left-recursive
+// standalone rule, which previously caused ANTLR error(119).
+condExpr
+    : impliesExpr (BAR impliesExpr)*
     ;
 
 impliesExpr
@@ -67,11 +74,26 @@ composeExpr
     ;
 
 unaryExpr
-    : prefixOp* appExpr                     // Level 8: Prefix operators
+    : prefixOp* postfixExpr                 // Level 8: Prefix operators
     ;
 
 prefixOp
     : RAISE | TRACE | QUERY | BREAK | DELAY
+    ;
+
+// Exception handling is a postfix construct: expr ↴ { ↯name ⇒ handler }
+// Formerly a standalone rule reachable from atomExpr, which cycled back into
+// expr and caused ANTLR error(119) (mutual left recursion).
+postfixExpr
+    : appExpr handlerSuffix*
+    ;
+
+handlerSuffix
+    : HANDLE LBRACE handlerClause+ RBRACE
+    ;
+
+handlerClause
+    : RAISE IDENTIFIER EXPORT expr
     ;
 
 appExpr
@@ -84,7 +106,6 @@ atomExpr
     | block
     | lambda
     | forall
-    | conditional
     | choiceType
     | atomicSection
     | raiiScope
@@ -93,7 +114,6 @@ atomExpr
     | periodicTask
     | moduleDecl
     | pathLiteral
-    | exceptionHandler
     ;
 
 primary
@@ -127,19 +147,16 @@ block
     ;
 
 lambda
-    : LAMBDA pattern (IN expr)? COLON expr
+    : LAMBDA_VAR pattern (IN expr)? COLON expr
     ;
 
 forall
     : FORALL pattern IN expr COLON expr
     ;
 
-conditional
-    : expr BAR expr                          // Simple conditional
-    ;
-
+// The | inside ⟨a|b⟩ is consumed by condExpr, so the rule needs no explicit BAR.
 choiceType
-    : LANGLE expr BAR expr RANGLE
+    : LANGLE expr RANGLE
     ;
 
 atomicSection
@@ -170,15 +187,15 @@ pathLiteral
     : PATH STRING
     ;
 
-exceptionHandler
-    : expr HANDLE LBRACE (RAISE IDENTIFIER EXPORT expr)+ RBRACE
+// Rewritten from the left-recursive, empty-tail form that caused error(148).
+pattern
+    : patternAtom (COMMA patternAtom)*
     ;
 
-pattern
+patternAtom
     : IDENTIFIER
     | greekVar
     | UNDERSCORE
-    | pattern (COMMA pattern)*
     ;
 
 list
@@ -244,7 +261,9 @@ BOOL        : '𝔹' | '\\bool' | '\\B' ;
 SEMICOLON   : ';' ;
 PARALLEL    : '‖' | '\\parallel' ;
 LEFTARROW   : '←' | '\\leftarrow' | '\\gets' ;
-IMPLIES     : '⟹' | '\\implies' | '\\Rightarrow' ;
+// '\Rightarrow' belongs to EXPORT (⇒); giving it to IMPLIES too fully
+// shadowed EXPORT's escape (ANTLR warning 184).
+IMPLIES     : '⟹' | '\\implies' ;
 OR          : '∨' | '\\or' | '\\vee' ;
 AND         : '∧' | '\\and' | '\\wedge' ;
 EQ          : '=' ;
@@ -270,7 +289,8 @@ BREAK       : '⧈' | '\\break' ;
 DELAY       : '⏲' | '\\delay' ;
 
 // Special operators
-LAMBDA      : 'λ' | '\\lambda' | '\\lam' ;
+// (LAMBDA was fully shadowed by LAMBDA_VAR — warning 184; LAMBDA_VAR is the
+// single λ token and the lambda parser rule uses it.)
 FORALL      : '∀' | '\\forall' ;
 EXISTS      : '∃' | '\\exists' ;
 DEFINITION  : '≜' | '\\coloneq' ;
