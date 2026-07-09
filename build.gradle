@@ -47,8 +47,10 @@ test {
     }
 }
 
-task parseExamples(type: JavaExec, dependsOn: classes) {
+// ParseExamples lives in the test source set, so the task needs the test
+// runtime classpath (with main.runtimeClasspath the class was never found).
+task parseExamples(type: JavaExec, dependsOn: testClasses) {
     mainClass = 'com.mpl.test.ParseExamples'
-    classpath = sourceSets.main.runtimeClasspath
+    classpath = sourceSets.test.runtimeClasspath
     args = ['examples']
 }

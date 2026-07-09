@@ -4,4 +4,4 @@ processFile ≜ λpath: {
     result ← transform(data);
     writeFile(result, 🖫"output.txt");
     ⟨"success"|"failed"⟩
-} ↴ {↯e ⇒ ⟨⊥|e⟩};
+} ↴ {↯e ⟹ ⟨⊥|e⟩};
