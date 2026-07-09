@@ -125,6 +125,8 @@ local.properties
 CLAUDE.md
 
 # Gradle wrapper (DO NOT IGNORE)
+# The negation must come after *.jar above — the last matching rule wins.
 !gradle/
+!gradle/wrapper/gradle-wrapper.jar
 !gradlew
 !gradlew.bat
