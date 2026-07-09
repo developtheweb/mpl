@@ -1,0 +1,1 @@
+{"status": "unratified", "source": "coverage", "decision": "", "notes": "braces do NOT create a scope: bindings made inside leak out"}

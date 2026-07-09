@@ -1,0 +1,1 @@
+{"status": "unratified", "source": "coverage", "decision": "", "notes": "+ concatenates when either operand is a string, rendering the other via show"}

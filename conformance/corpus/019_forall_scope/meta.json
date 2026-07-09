@@ -1,0 +1,1 @@
+{"status": "unratified", "source": "coverage", "decision": "", "notes": "the ∀ variable shadows per iteration and the outer binding survives"}

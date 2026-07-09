@@ -1,0 +1,1 @@
+{"status": "unratified", "source": "coverage", "decision": "", "notes": "calls inside list literals; λ argument"}

@@ -1,0 +1,1 @@
+{"status": "unratified", "source": "coverage", "decision": "", "notes": "ordering across types follows host coercion — observed, flagged as a judgment call"}

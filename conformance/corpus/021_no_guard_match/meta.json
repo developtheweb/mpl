@@ -1,0 +1,1 @@
+{"status": "unratified", "source": "coverage", "decision": "", "notes": "a guard that never fires, with no | fallback, surfaces as ⊥"}

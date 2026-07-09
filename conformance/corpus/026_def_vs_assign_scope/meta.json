@@ -1,0 +1,1 @@
+{"status": "unratified", "source": "coverage", "decision": "", "notes": "inside a λ, ← mutates the captured outer binding; ≜ creates a local one"}

@@ -1,0 +1,1 @@
+{"status": "unratified", "source": "coverage", "decision": "", "notes": "equality is structural per type and false across types; ⊥ equals ⊥"}

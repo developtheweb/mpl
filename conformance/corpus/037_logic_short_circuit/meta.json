@@ -1,0 +1,1 @@
+{"status": "unratified", "source": "coverage", "decision": "", "notes": "∧ skips its right side on false; ∨ skips it on true (observable via side effect)"}

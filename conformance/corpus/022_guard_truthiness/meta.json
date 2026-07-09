@@ -1,0 +1,1 @@
+{"status": "unratified", "source": "coverage", "decision": "", "notes": "guard conditions: true or non-zero number fire; strings/lists never do"}

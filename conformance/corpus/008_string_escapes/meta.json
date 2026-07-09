@@ -1,0 +1,1 @@
+{"status": "unratified", "source": "coverage", "decision": "", "notes": "string escapes \\n \\t \\\" \\\\ (unknown escapes like \\q diverge from the grammar — see DIVERGENCES.md, not corpus-pinnable)"}
