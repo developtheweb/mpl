@@ -54,3 +54,11 @@ task parseExamples(type: JavaExec, dependsOn: testClasses) {
     classpath = sourceSets.test.runtimeClasspath
     args = ['examples']
 }
+
+// Grammar-check CLI (see ParseCheck.java): file paths or '-' for stdin via
+// --args passthrough, e.g. ./gradlew -q parseCheck --args='examples/01_hello_world.mpl'
+task parseCheck(type: JavaExec, dependsOn: classes) {
+    mainClass = 'com.mpl.tools.ParseCheck'
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+}
