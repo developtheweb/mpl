@@ -4,11 +4,11 @@
 <div align="center">
 
 ![Status](https://img.shields.io/badge/status-proof--of--concept-orange)
-![Parser](https://img.shields.io/badge/parser-complete-brightgreen)
+![Parser](https://img.shields.io/badge/parser-M0-brightgreen)
 ![Execution](https://img.shields.io/badge/execution-not--implemented-red)
 ![License](https://img.shields.io/badge/license-AGPLv3-blue)
 
-**∀ child ∈ world : programming.accessible = true**
+**∀ child ∈ world : canCode(child)**
 
 [🎓 For Educators](#for-educators) | [💻 For Developers](#for-developers) | [🌍 For Humanity](#for-humanity)
 
@@ -18,14 +18,16 @@
 
 ## 🚨 Project Status: Proof of Concept
 
-**Important**: MPL is currently a research prototype demonstrating that programming languages can be built from mathematical notation. We have implemented a complete parser that validates the concept, but **programs cannot yet be executed**. This is a vision project seeking contributors to help build the interpreter and runtime.
+**Important**: MPL is currently a research prototype demonstrating that programming languages can be built from mathematical notation. We have implemented a working M0 parser that validates the concept, but **programs cannot yet be executed**. This is a vision project seeking contributors to help build the interpreter and runtime.
 
 ### What Works Today ✅
-- Complete ANTLR 4 grammar with 70+ mathematical symbols
-- Parser that successfully processes all major programming paradigms  
-- Zero grammar ambiguities
-- Comprehensive test suite validating syntax
-- ASCII escape sequences for every Unicode symbol
+
+Every item below is enforced by [CI](.github/workflows/ci.yml) on every push:
+
+- An ANTLR 4 grammar built from mathematical symbols that compiles with zero errors and zero warnings (warnings are treated as errors)
+- All 10 [example programs](examples/) parse (`./gradlew parseExamples`)
+- A test suite covering the lexer, the parser, the examples, and every ```` ```mpl ```` code block in this README (`./gradlew test`)
+- An ASCII escape sequence for every Unicode symbol ([glyph-escapes.md](glyph-escapes.md))
 
 ### What Doesn't Work Yet 🚧
 - **No interpreter** - Programs parse but don't run
@@ -51,16 +53,14 @@ Every design decision in MPL must pass one simple test: **Can a 10-year-old non-
 ### Traditional programming
 ```python
 # English required:
-for i in range(10):
-    if i % 2 == 0:
-        print(i)
+for n in [1, 2, 3, 4, 5]:
+    print(n * n)
 ```
 
 ### MPL - Universal understanding
 ```mpl
-# Mathematical symbols only:
-∀ i ∈ [0,10) :
-    i % 2 = 0 ? 📤(i)
+-- Mathematical symbols only:
+∀ n ∈ [1, 2, 3, 4, 5] : ✎(n × n)
 ```
 
 If Fatima can't understand it with her basic math knowledge, we redesign it. No exceptions.
@@ -98,14 +98,14 @@ print("Hello, World!")
 <td>
 
 ```mpl
-📤("Hello, World!")
+✎"Hello, World!"
 ```
 
 </td>
 </tr>
 <tr>
 <td>English words: print</td>
-<td>Universal symbol: 📤 (output)</td>
+<td>Universal symbol: ✎ (output/trace)</td>
 </tr>
 </table>
 
@@ -121,7 +121,7 @@ Write code using mathematical symbols instead of English words. It's that simple
 ```
 ┌─────────────────────────────────────────────┐
 │          Mathematical Notation              │
-│         λn: n > 0 ? n × fact(n-1) : 1      │
+│    λn: (n ≤ 1 ⟹ 1) | (n × fact(n-1))       │
 └────────────────┬───────────────────────────┘
                  │
                  ▼
@@ -139,30 +139,30 @@ Write code using mathematical symbols instead of English words. It's that simple
 
 ### Five ways to write λ (lambda)
 
-1. **👆 Click** — Visual symbol palette
-2. **⌨️ Type** — `\lambda` transforms automatically  
-3. **🎤 Speak** — "Lambda" in ANY language (العربية, 中文, Español...)
-4. **✍️ Draw** — Handwriting recognition on tablets
-5. **⚡ Shortcut** — Platform shortcuts (Cmd+L, Alt+L)
+Today the parser accepts two spellings of every symbol: the Unicode glyph (λ) and its ASCII escape (`\lambda`). The rest are the input methods we envision tooling for:
+
+1. **⌨️ Type** — `\lambda` (works today, in any editor)
+2. **👆 Click** — Visual symbol palette (envisioned)
+3. **🎤 Speak** — "Lambda" in ANY language (envisioned)
+4. **✍️ Draw** — Handwriting recognition on tablets (envisioned)
+5. **⚡ Shortcut** — Platform shortcuts (envisioned)
 
 <details>
 <summary>🔧 Technical details (click to expand)</summary>
 
 ### Unicode implementation
-- Full UTF-8 support with 70+ mathematical operators
-- Bidirectional text support for RTL languages
-- Font fallback system ensuring symbol visibility
+- Full Unicode support, including supplementary-plane symbols (𝓜, 𝔹, 🖫)
+- Every glyph has exactly one ASCII escape ([glyph-escapes.md](glyph-escapes.md))
 
 ### Parser architecture
 ```
-Input Methods → Unicode Stream → ANTLR 4 Lexer → AST → 
-    → Type Checker → Optimizer → Code Generation
+Input Methods → Unicode Stream → ANTLR 4 Lexer → Parse Tree
 ```
+Type checking, optimization and code generation are planned, not built.
 
 ### Grammar specification
-- Zero shift/reduce conflicts
-- Validated operator precedence
-- Complete coverage of programming paradigms
+- Compiles with zero ANTLR errors and warnings (enforced in CI)
+- Operator precedence documented in [precedence.csv](precedence.csv)
 - [View full ANTLR grammar](src/main/antlr4/MPL.g4)
 
 </details>
@@ -178,37 +178,40 @@ Input Methods → Unicode Stream → ANTLR 4 Lexer → AST →
 - **Cultural neutrality** — No linguistic imperialism
 - **Instant comprehension** — Symbols map to concepts directly
 
-### 🎨 Multi-modal input
+### 🎨 Multi-modal input (envisioned)
 **Meet learners where they are**
+
+Only ASCII escapes exist today; the rest is the tooling we want to build:
 
 ```
 ┌─────────────┬─────────────┬─────────────┬─────────────┐
 │   Visual    │    Voice    │  Keyboard   │ Handwriting │
-│   Palette   │    Input    │  Shortcuts  │ Recognition │
+│   Palette   │    Input    │   Escapes   │ Recognition │
 ├─────────────┼─────────────┼─────────────┼─────────────┤
 │  Click λ    │ Say "lambda"│ Type \lambda│  Draw λ     │
-│  from menu  │ in any lang │ → λ appears │  on screen  │
+│  from menu  │ in any lang │ (works now) │  on screen  │
 └─────────────┴─────────────┴─────────────┴─────────────┘
 ```
 
-- **Visual palette** — Click symbols like emoji
-- **Voice input** — Speak in your native language
-- **Handwriting** — Natural for mathematical notation
-- **Smart shortcuts** — For power users
+- **ASCII escapes** — `\lambda`, `\forall`, … work in any editor today
+- **Visual palette** — Click symbols like emoji (envisioned)
+- **Voice input** — Speak in your native language (envisioned)
+- **Handwriting** — Natural for mathematical notation (envisioned)
 
 ### 📈 Progressive complexity
 **From arithmetic to algorithms**
 
 ```mpl
-# Level 1: Basic math (everyone knows this!)
-x ← 5 + 3
-y ← x × 2
+-- Level 1: Basic math (everyone knows this!)
+x ← 5 + 3;
+y ← x × 2;
 
-# Level 2: Logic (learned in school)
-x > 10 ∧ y < 20 ? 📤("Success!")
+-- Level 2: Logic (learned in school)
+x > 10 ∧ y < 20 ⟹ ✎"Success!";
 
-# Level 3: Advanced (natural progression)
-∑(i ∈ [1,100] : i²) → result
+-- Level 3: Advanced (natural progression)
+squares ← 0;
+∀ n ∈ [1, 2, 3, 4, 5] : squares ← squares + n × n;
 ```
 
 ---
@@ -255,16 +258,18 @@ We envision students could progress like this:
 
 **Starting point**: Basic math knowledge, no English
 ```mpl
-# Month 1: First program using familiar symbols
-📤("Jambo!")  # Hello in their language
+-- Month 1: First program using familiar symbols
+✎"Jambo!"  -- Hello in their language
 ```
 
 **Growing skills**: Applying math knowledge to programming
 ```mpl
-# Month 6: Using mathematical concepts they know
-data ← [23, 45, 67, 34, 89, 12]
-average ← (∑ x ∈ data : x) ÷ |data|
-📤("Average: " + average)
+-- Month 6: Using mathematical concepts they know
+data ← [23, 45, 67, 34, 89, 12];
+total ← 0;
+∀ x ∈ data : total ← total + x;
+average ← total ÷ 6;
+✎("Average: " + average)
 ```
 
 **Sharing knowledge**: Teaching others in their community
@@ -277,72 +282,66 @@ average ← (∑ x ∈ data : x) ÷ |data|
 
 ## 💻 Code examples (Syntax Demonstration)
 
-**Note**: These examples show valid MPL syntax that our parser accepts. However, since we haven't built an interpreter yet, they cannot be executed.
+**Note**: These examples show valid MPL syntax that our parser accepts (a test extracts every code block on this page and parses it). However, since we haven't built an interpreter yet, they cannot be executed.
+
+Some notation you might expect from math class — ∑, √, ², `%` (modulo), |x|, ranges like [1..10] — is deliberately absent: it is deferred to milestone M1, where each symbol will arrive together with defined semantics (see [DECISIONS.md](DECISIONS.md)).
 
 ### Level 1: Arithmetic thinking 🔢
 *What every child knows*
 
 ```mpl
-# Store values (like math class!)
-# This syntax is valid and will parse ✓
-length ← 5
-width ← 3
-area ← length × width
-📤("Area = " + area)
+-- Store values (like math class!)
+length ← 5;
+width ← 3;
+area ← length × width;
+✎("Area = " + area);
 
-# Make decisions
-# Parser accepts this, execution not implemented ✗
-age ← 15
-age ≥ 18 ? 📤("Adult") : 📤("Minor")
+-- Make decisions: (condition ⟹ result) | fallback
+age ← 15;
+(age ≥ 18 ⟹ ✎"Adult") | ✎"Minor";
 ```
 
 ### Level 2: Logical reasoning 🧩
 *Natural progression from math*
 
 ```mpl
-# Find all even numbers (∀ = "for all")
-∀ n ∈ [1,20] :
-    n % 2 = 0 ? 📤(n)
+-- Do something for every element (∀ = "for all")
+∀ n ∈ [1, 2, 3, 4, 5] : ✎(n × n);
 
-# Sum of squares (just like ∑ in math!)
-total ← ∑(i ∈ [1,10] : i²)
-📤("Sum of squares: " + total)
+-- Accumulate a running total
+total ← 0;
+∀ n ∈ [1, 2, 3, 4, 5] : total ← total + n;
+✎("Total: " + total);
 ```
 
 ### Level 3: Real-world applications 🌍
 *Solving community problems*
 
 ```mpl
-# Weather data analysis
-temperatures ← [28, 30, 27, 31, 29, 33, 28]
-μ ← (∑ t ∈ temperatures : t) ÷ |temperatures|
-σ ← √((∑ t ∈ temperatures : (t - μ)²) ÷ |temperatures|)
+-- Weather data analysis
+temperatures ← [28, 30, 27, 31, 29, 33, 28];
+total ← 0;
+∀ t ∈ temperatures : total ← total + t;
+μ ← total ÷ 7;
+✎("Average: " + μ + "°C");
 
-📤("Average: " + μ + "°C")
-📤("Std Dev: " + σ)
-
-# Parallel processing (∥ = parallel)
-results ← ∥ {
-    α: analyzeRegionNorth()
-    β: analyzeRegionSouth()
-    γ: analyzeRegionEast()
-}
+-- Parallel processing (‖ = parallel)
+results ← analyzeNorth() ‖ analyzeSouth() ‖ analyzeEast();
 ```
 
 ### Level 4: Advanced concepts 🚀
 *For those ready to go deeper*
 
 ```mpl
-# Neural network layer (yes, AI in symbols!)
-layer ← λ(W, b, x):
-    σ(W × x + b)  # Matrix multiplication!
-    where σ ← λz: 1 ÷ (1 + e^(-z))
+-- Function composition (∘, straight from math class)
+double ≜ λn: n × 2;
+addOne ≜ λn: n + 1;
+transform ≜ double ∘ addOne;
+✎(transform(5));
 
-# Functional programming
-map ← λ(f, list):
-    |list| = 0 ? [] : [f(list[0])] + map(f, list[1:])
-
-∀ x ∈ map(λn: n², [1,2,3,4,5]) : 📤(x)
+-- Higher-order functions
+apply ≜ λf, x: f(x);
+✎(apply(λn: n × n, 6));
 ```
 
 ---
@@ -352,9 +351,9 @@ map ← λ(f, list):
 We believe the core innovation of MPL is proving that mathematical notation can replace English keywords. By releasing the parser, we demonstrate this is grammatically possible and invite the community to help build the rest.
 
 The parser alone proves several key points:
-- Mathematical symbols can express all programming constructs
-- A language without English keywords is technically feasible  
-- The grammar handles real complexity with zero ambiguities
+- Mathematical symbols can express the core programming constructs (see the ten [examples](examples/))
+- A language without English keywords is technically feasible
+- The grammar compiles with zero ANTLR errors and warnings, enforced in CI
 - ASCII fallbacks make it universally typeable
 
 Sometimes the idea is more important than the implementation. By sharing MPL now, we hope to inspire others to think differently about programming languages and who they exclude.
@@ -365,9 +364,10 @@ Sometimes the idea is more important than the implementation. By sharing MPL now
 
 ### Grammar specification
 
-- **70+ operators** across 15 categories
-- **Zero ambiguities** in ANTLR 4 grammar
-- **Proven precedence** through 1000+ test cases
+- Every symbol has exactly one meaning and one ASCII escape ([glyph-escapes.md](glyph-escapes.md))
+- Operator precedence is documented in [precedence.csv](precedence.csv) and exercised by the test suite
+- The grammar compiles with zero ANTLR errors and warnings (`-Werror`, enforced in CI)
+- 200+ syntax assertions across the lexer, parser, example, and documentation test suites
 - [Full grammar specification](src/main/antlr4/MPL.g4)
 
 ### Implementation stack
@@ -389,22 +389,17 @@ Sometimes the idea is more important than the implementation. By sharing MPL now
 └────────────────────┬───────────────────────┘
                      │
 ┌────────────────────▼───────────────────────┐
-│          Semantic Analysis                  │
+│          Semantic Analysis (planned)        │
 │    Type Checking → Effect Analysis         │
 └────────────────────┬───────────────────────┘
                      │
 ┌────────────────────▼───────────────────────┐
-│            Code Generation                  │
+│          Code Generation (planned)          │
 │   LLVM │ JVM │ JavaScript │ Python         │
 └────────────────────────────────────────────┘
 ```
 
-### Performance metrics
-
-- **Parse time**: <10ms for 1000 LOC
-- **Memory usage**: O(n) with input size
-- **Unicode handling**: Zero-copy string processing
-- **Error recovery**: Continues parsing after errors
+Only the parser stage exists today; the lower stages are the planned architecture. We publish no performance numbers until CI measures them.
 
 ---
 
@@ -455,7 +450,7 @@ Sometimes the idea is more important than the implementation. By sharing MPL now
 
 ```bash
 # Clone and build
-git clone https://github.com/mpl-lang/mpl
+git clone https://github.com/developtheweb/mpl.git
 cd mpl
 ./gradlew build
 
@@ -473,7 +468,7 @@ cd mpl
 - 🔧 Language features
 - 📱 Mobile applications
 
-[Contributing guidelines](CONTRIBUTING.md) | [Architecture docs](docs/ARCHITECTURE.md) | [Discord community](https://discord.gg/mpl-lang)
+[Contributing guidelines](CONTRIBUTING.md) | [Architecture docs](docs/ARCHITECTURE.md) | [GitHub issues](https://github.com/developtheweb/mpl/issues)
 
 ### For researchers 🔬
 
