@@ -18,7 +18,7 @@
 
 ## 🚨 Project Status: Proof of Concept
 
-**Important**: MPL is currently a research prototype demonstrating that programming languages can be built from mathematical notation. We have implemented a working M0 parser that validates the concept, but **programs cannot yet be executed**. This is a vision project seeking contributors to help build the interpreter and runtime.
+**Important**: MPL is a research prototype. This repository contains the grammar, the parser, and the browser interpreter (`js/mpl.js`) that runs the M0 core today at [mpl.codes](https://mpl.codes). A native runtime beyond the browser core does not exist yet — building it is the next milestone, and contributors are welcome.
 
 ### What Works Today ✅
 
@@ -30,7 +30,7 @@ Every item below is enforced by [CI](.github/workflows/ci.yml) on every push:
 - An ASCII escape sequence for every Unicode symbol ([glyph-escapes.md](glyph-escapes.md))
 
 ### What Doesn't Work Yet 🚧
-- **No interpreter** - Programs parse but don't run
+- **No native runtime** - The M0 core runs in the browser interpreter (`js/mpl.js`); everything beyond it parses but does not run yet
 - **No type checking** - Types are recognized but not validated
 - **No standard library** - No built-in functions
 - **No tooling** - Basic parser only
@@ -76,7 +76,7 @@ If Fatima can't understand it with her basic math knowledge, we redesign it. No 
 | 🎓 **Educator?** | 💻 **Developer?** | 🌍 **Changemaker?** |
 |:---:|:---:|:---:|
 | [See the Vision](#educational-vision) | [Technical Details](#technical-architecture) | [Why This Matters](#why-this-matters) |
-| Imagine teaching without English | Help build the interpreter | Support cognitive justice |
+| Imagine teaching without English | Help build the runtime | Support cognitive justice |
 
 </div>
 
@@ -109,7 +109,7 @@ print("Hello, World!")
 </tr>
 </table>
 
-**Note**: This syntax is valid and will parse, but cannot be executed yet as we haven't built an interpreter.
+**Note**: This syntax is valid and parses. The M0 core runs in the browser interpreter at [mpl.codes](https://mpl.codes); features beyond the M0 core parse but do not run yet.
 
 ---
 
@@ -282,7 +282,7 @@ average ← total ÷ 6;
 
 ## 💻 Code examples (Syntax Demonstration)
 
-**Note**: These examples show valid MPL syntax that our parser accepts (a test extracts every code block on this page and parses it). However, since we haven't built an interpreter yet, they cannot be executed.
+**Note**: These examples show valid MPL syntax that our parser accepts (a test extracts every code block on this page and parses it). The M0-core subset runs in the browser interpreter at [mpl.codes](https://mpl.codes); the rest parses but does not run yet.
 
 Some notation you might expect from math class — ∑, √, ², `%` (modulo), |x|, ranges like [1..10] — is deliberately absent: it is deferred to milestone M1, where each symbol will arrive together with defined semantics (see [DECISIONS.md](DECISIONS.md)).
 
@@ -513,7 +513,7 @@ These aren't testimonials - they're possibilities we're working toward. MPL is s
 | 🎓 **Educators** | 💻 **Developers** | 🏛️ **Institutions** | 💰 **Supporters** |
 |:---:|:---:|:---:|:---:|
 | Share the vision | [Contribute code](https://github.com/developtheweb/mpl) | Contact us to explore | Star the project |
-| Imagine the possibilities | Build the interpreter | Research partnerships | Spread the word |
+| Imagine the possibilities | Build the runtime | Research partnerships | Spread the word |
 
 </div>
 
