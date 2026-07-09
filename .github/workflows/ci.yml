@@ -41,3 +41,37 @@ jobs:
 
       - name: Run interpreter tests
         run: node --test "js/test/*.test.mjs"
+
+  conformance:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Set up Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      # Gates on ratified entries only. Exits 0 vacuously while nothing is
+      # ratified — unratified observations must never become a CI gate.
+      - name: Ratified conformance corpus passes
+        run: node conformance/harness/run.mjs --ratified
+
+      # Locked decision: the corpus is downstream of the syntax truth. Every
+      # program must parse, except must-reject entries whose expected error
+      # is parse-class — the grammar rejects those too (verified in C3).
+      - name: Grammar accepts every runnable corpus program
+        run: |
+          runnable=$(for d in conformance/corpus/*/; do
+            if [ -f "${d}expected.out" ]; then echo "${d}program.mpl"
+            elif ! grep -qE '^err_(char|escape|string|comment|expect|unexpected|def_target|assign_target)$' "${d}expected.err"; then echo "${d}program.mpl"
+            fi
+          done | tr '\n' ' ')
+          ./gradlew -q parseCheck --args="$runnable"
