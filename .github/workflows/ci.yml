@@ -27,3 +27,17 @@ jobs:
 
       - name: Parse all examples
         run: ./gradlew parseExamples
+
+  interpreter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up Node 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Run interpreter tests
+        run: node --test "js/test/*.test.mjs"
