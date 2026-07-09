@@ -2,127 +2,26 @@
 
 ## Appendix A: Complete Symbol Reference
 
-### A.1 Core Mathematical Operators
+The authoritative symbol table — every glyph, its single ASCII escape, and
+its Unicode code point — is maintained in one place:
+[`glyph-escapes.md`](../glyph-escapes.md). It matches the lexer rules in
+[`MPL.g4`](../src/main/antlr4/MPL.g4) exactly. A duplicate table here would
+drift; earlier versions of this appendix did exactly that.
 
-#### Greek Letters (Variables)
-All 24 Greek letters serve as single-character identifiers, following mathematical convention:
+In summary, the M0 symbol set comprises:
 
-| Symbol | ASCII Escape | Unicode | Mathematical Usage | MPL Usage |
-|--------|-------------|---------|-------------------|-----------|
-| α | `\alpha` | U+03B1 | Angle, coefficient | General variable |
-| β | `\beta` | U+03B2 | Angle, coefficient | General variable |
-| γ | `\gamma` | U+03B3 | Euler constant | General variable |
-| δ | `\delta` | U+03B4 | Small change | General variable |
-| ε | `\epsilon` | U+03B5 | Small positive | General variable |
-| ζ | `\zeta` | U+03B6 | Zeta function | General variable |
-| η | `\eta` | U+03B7 | Efficiency | General variable |
-| θ | `\theta` | U+03B8 | Angle | General variable |
-| ι | `\iota` | U+03B9 | Imaginary unit | General variable |
-| κ | `\kappa` | U+03BA | Curvature | General variable |
-| λ | `\lambda`, `\lam` | U+03BB | Eigenvalue | Lambda/function |
-| μ | `\mu` | U+03BC | Mean, measure | General variable |
-| ν | `\nu` | U+03BD | Frequency | General variable |
-| ξ | `\xi` | U+03BE | Random variable | General variable |
-| ο | `\omicron` | U+03BF | - | General variable |
-| π | `\pi` | U+03C0 | Pi constant | Variable/constant |
-| ρ | `\rho` | U+03C1 | Density | General variable |
-| σ | `\sigma` | U+03C3 | Standard deviation | General variable |
-| τ | `\tau` | U+03C4 | Time constant | General variable |
-| υ | `\upsilon` | U+03C5 | - | General variable |
-| φ | `\phi` | U+03C6 | Golden ratio | General variable |
-| χ | `\chi` | U+03C7 | Chi distribution | General variable |
-| ψ | `\psi` | U+03C8 | Wave function | General variable |
-| ω | `\omega` | U+03C9 | Angular velocity | General variable |
+- **24 Greek letters** (α…ω) as variables, with λ doubling as the lambda binder
+- **Logic**: ∧ ∨ ⟹ ∀
+- **Arithmetic**: + - × ÷ (ASCII alias `/`) ∗ ∘, with unary minus
+- **Comparisons**: = ≠ < > ≤ ≥ ≈ ∼
+- **Sets and types**: ∅ ∈ ℕ ℤ ℚ ℝ ℂ 𝔹 ⊥
+- **Definition and assignment**: ≜ and ←
+- **Output**: ✎ (the one output operator)
+- **Effects**: ↯ ↴ ‖ ⌈⌉ ⊕ ⊖ ⇀ ↽ ⏲ ⧈ ⟳ 〔〕
+- **Modules and metaprogramming**: 𝓜 ⇒ ‧ 🖫 ⌜⌝ ⌞⌟ ⟨⟩
 
-#### Logical Operators
-
-| Symbol | ASCII Escape | Unicode | Precedence | Associativity | Description |
-|--------|-------------|---------|------------|---------------|-------------|
-| ∧ | `\and`, `\wedge` | U+2227 | 3 | Left | Logical AND |
-| ∨ | `\or`, `\vee` | U+2228 | 2 | Left | Logical OR |
-| ¬ | `\not`, `\neg` | U+00AC | 8 | Prefix | Logical NOT |
-| ⟹ | `\implies`, `\Rightarrow` | U+27F9 | 1 | Right | Implication |
-| ⟺ | `\iff`, `\Leftrightarrow` | U+27FA | 1 | Right | If and only if |
-| ∀ | `\forall` | U+2200 | - | - | Universal quantifier |
-| ∃ | `\exists` | U+2203 | - | - | Existential quantifier |
-
-#### Arithmetic Operators
-
-| Symbol | ASCII Escape | Unicode | Precedence | Associativity | Description |
-|--------|-------------|---------|------------|---------------|-------------|
-| + | - | U+002B | 5 | Left | Addition |
-| - | - | U+002D | 5 | Left | Subtraction |
-| × | `\times` | U+00D7 | 6 | Left | Multiplication |
-| ÷ | `\div` | U+00F7 | 6 | Left | Division |
-| ^ | - | U+005E | 7 | Right | Exponentiation |
-| √ | `\sqrt` | U+221A | 8 | Prefix | Square root |
-| Σ | `\sum` | U+2211 | - | - | Summation |
-
-#### Set Theory Operators
-
-| Symbol | ASCII Escape | Unicode | Description |
-|--------|-------------|---------|-------------|
-| ∅ | `\emptyset` | U+2205 | Empty set |
-| ∈ | `\in` | U+2208 | Element of |
-| ∉ | `\notin` | U+2209 | Not element of |
-| ⊂ | `\subset` | U+2282 | Proper subset |
-| ⊆ | `\subseteq` | U+2286 | Subset or equal |
-| ∪ | `\union`, `\cup` | U+222A | Set union |
-| ∩ | `\intersect`, `\cap` | U+2229 | Set intersection |
-| \| | - | U+007C | Set size/cardinality |
-
-#### Comparison Operators
-
-| Symbol | ASCII Escape | Unicode | Precedence | Description |
-|--------|-------------|---------|------------|-------------|
-| = | - | U+003D | 4 | Equality |
-| ≠ | `\neq`, `\ne` | U+2260 | 4 | Not equal |
-| < | - | U+003C | 4 | Less than |
-| > | - | U+003E | 4 | Greater than |
-| ≤ | `\leq`, `\le` | U+2264 | 4 | Less or equal |
-| ≥ | `\geq`, `\ge` | U+2265 | 4 | Greater or equal |
-| ≈ | `\approx` | U+2248 | 4 | Approximately |
-
-### A.2 Programming Extensions
-
-#### I/O and Assignment
-| Symbol | ASCII Escape | Unicode | Usage | Example |
-|--------|-------------|---------|-------|---------|
-| ✎ | `\pencil` | U+270E | Output/print | `✎ "Hello"` |
-| ← | `\leftarrow`, `\gets` | U+2190 | Assignment | `x ← 42` |
-| → | `\rightarrow`, `\to` | U+2192 | Function type | `ℕ → ℕ` |
-| ≜ | `\coloneq` | U+225C | Definition | `fact ≜ λn: ...` |
-
-#### Exception Handling
-| Symbol | ASCII Escape | Unicode | Usage | Example |
-|--------|-------------|---------|-------|---------|
-| ↯ | `\lightning` | U+21AF | Raise exception | `↯"Error!"` |
-| ↴ | `\downarrow` | U+21B4 | Handle exception | `expr ↴ {handler}` |
-
-#### Concurrency
-| Symbol | ASCII Escape | Unicode | Usage | Example |
-|--------|-------------|---------|-------|---------|
-| ‖ | `\parallel` | U+2016 | Parallel composition | `task1 ‖ task2` |
-| ⇀ | `\send` | U+21C0 | Channel send | `value ⇀ channel` |
-| ↽ | `\receive` | U+21BD | Channel receive | `↽ channel` |
-
-#### Resource Management
-| Symbol | ASCII Escape | Unicode | Usage | Example |
-|--------|-------------|---------|-------|---------|
-| ⊕ | `\oplus` | U+2295 | Resource acquire | `file ← ⊕open(path)` |
-| ⊖ | `\ominus` | U+2296 | Resource release | `⊖file` |
-| 〔〕 | `\lbracket`, `\rbracket` | U+3014/5 | RAII scope | `〔resource ops〕` |
-
-#### Type Symbols
-
-| Symbol | ASCII Escape | Unicode | Type | Set Definition |
-|--------|-------------|---------|------|----------------|
-| ℕ | `\nat`, `\N` | U+2115 | Natural numbers | {0, 1, 2, ...} |
-| ℤ | `\int`, `\Z` | U+2124 | Integers | {..., -2, -1, 0, 1, 2, ...} |
-| ℚ | `\rat`, `\Q` | U+211A | Rational numbers | {p/q : p,q ∈ ℤ, q ≠ 0} |
-| ℝ | `\real`, `\R` | U+211D | Real numbers | Complete ordered field |
-| ℂ | `\complex`, `\C` | U+2102 | Complex numbers | {a + bi : a,b ∈ ℝ} |
-| 𝔹 | `\bool`, `\B` | U+1D539 | Booleans | {true, false} |
+Symbols reserved for M1 (∪ ∩ ⊂ ⊆ ∉ ¬ ⟺ ∃ → ⇐ ∑ √ ² % ? and friends) are
+listed at the end of `glyph-escapes.md`; they are not in the grammar.
 
 ## Appendix B: Annotated Example Programs
 
@@ -141,10 +40,10 @@ All 24 Greek letters serve as single-character identifiers, following mathematic
 #### Month 3: Variables and Arithmetic
 ```mpl
 -- Calculate rectangle area
-ℓ ← 5       -- length
-w ← 3       -- width  
-A ← ℓ × w   -- area formula
-✎ A         -- output: 15
+L ← 5;         -- length
+w ← 3;         -- width
+A ← L × w;     -- area formula
+✎ A            -- prints 15 (once MPL executes)
 ```
 **Annotations:**
 - `←` (left arrow): Assignment matches math notation
@@ -155,9 +54,10 @@ A ← ℓ × w   -- area formula
 #### Month 6: Loops and Summation
 ```mpl
 -- Sum numbers 1 to 10
-Σ ← 0
-∀ n ∈ [1..10]: Σ ← Σ + n
-✎ "Sum: " + Σ
+numbers ← [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+total ← 0;
+∀ n ∈ numbers : total ← total + n;
+✎("Sum: " + total)
 ```
 **Annotations:**
 - `∀` (for all): Universal quantifier for iteration
@@ -168,10 +68,10 @@ A ← ℓ × w   -- area formula
 #### Month 6: Conditional Logic
 ```mpl
 -- Classify a number
-x ← -5
-x < 0 ⟹ ✎ "Negative"
-x = 0 ⟹ ✎ "Zero"  
-x > 0 ⟹ ✎ "Positive"
+x ← -5;
+(x < 0 ⟹ ✎"Negative") |
+(x = 0 ⟹ ✎"Zero") |
+(x > 0 ⟹ ✎"Positive")
 ```
 **Annotations:**
 - `⟹` (implies): If-then as logical implication
@@ -181,9 +81,9 @@ x > 0 ⟹ ✎ "Positive"
 #### Month 6: Recursion (Factorial)
 ```mpl
 -- Factorial function
-fact ≜ λn: n ≤ 1 ⟹ 1 ∣ n × fact(n - 1)
+fact ≜ λn: (n ≤ 1 ⟹ 1) | (n × fact(n - 1));
 
-✎ fact(5)  -- Output: 120
+✎ fact(5)  -- 120 (once MPL executes)
 ```
 **Annotations:**
 - `≜` (define as): Function definition
@@ -194,42 +94,38 @@ fact ≜ λn: n ≤ 1 ⟹ 1 ∣ n × fact(n - 1)
 ### B.2 Advanced Examples
 
 #### Quadratic Solver
-```mpl
--- Solve ax² + bx + c = 0
+The quadratic solver below is an M1+ design sketch — it uses ², √ and
+subscripts, which are not yet in the grammar, so it is fenced as plain text:
+
+```text
+-- Solve ax² + bx + c = 0   (M1+ design sketch, not yet parseable)
 quadratic ≜ λa,b,c:
-    Δ ← b² - 4×a×c
-    Δ < 0 ⟹ ✎ "No real solutions"
-    Δ = 0 ⟹ ✎ "One solution: " + (-b÷(2×a))
-    Δ > 0 ⟹ 
-        r₁ ← (-b + √Δ) ÷ (2×a)
-        r₂ ← (-b - √Δ) ÷ (2×a)
-        ✎ "Two solutions: " + r₁ + ", " + r₂
+    Δ ← b² - 4×a×c;
+    (Δ < 0 ⟹ ✎"No real solutions") |
+    (Δ = 0 ⟹ ✎("One solution: " + (-b÷(2×a)))) |
+    (Δ > 0 ⟹ ✎("Two solutions: " + ((-b + √Δ) ÷ (2×a)) + ", " + ((-b - √Δ) ÷ (2×a))))
 ```
 
 #### List Processing
-```mpl
--- Filter and map
-numbers ← [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+Set comprehensions and `mod` are M1+ design sketches, so this block is
+fenced as plain text:
 
--- Get even numbers
-evens ← {n ∈ numbers | n mod 2 = 0}
-
--- Square them
-squares ← {n² | n ∈ evens}
-
-✎ squares  -- Output: [4, 16, 36, 64, 100]
+```text
+-- Filter and map   (M1+ design sketch, not yet parseable)
+numbers ← [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+evens ← {n ∈ numbers | n mod 2 = 0};
+squares ← {n² | n ∈ evens};
+✎ squares
 ```
 
 #### Error Handling
 ```mpl
 -- Safe division with exceptions
-safeDivide ≜ λx,y: 
-    y = 0 ⟹ ↯"Division by zero!"
-    x ÷ y
+safeDivide ≜ λx, y: (y = 0 ⟹ ↯"Division by zero!") | (x ÷ y);
 
 -- Using with handler
 result ← safeDivide(10, 0) ↴ {
-    ↯"Division by zero!" ⟹ ✎ "Error caught"
+    ↯"Division by zero!" ⟹ ✎"Error caught";
     ↯e ⟹ ↯e  -- Re-raise other errors
 }
 ```
@@ -237,139 +133,132 @@ result ← safeDivide(10, 0) ↴ {
 #### Concurrent Downloads
 ```mpl
 -- Download multiple URLs in parallel
-urls ← ["http://a.com", "http://b.com", "http://c.com"]
+urls ← ["http://a.com", "http://b.com", "http://c.com"];
 
--- Launch parallel downloads
-∀ url ∈ urls: 
-    fetch(url) ⇀ results ‖
+-- Launch parallel downloads, sending each result to the results channel
+∀ url ∈ urls : ⇀_results fetch(url);
 
 -- Collect results
-∀ i ∈ [1..|urls|]:
-    data ← ↽results
-    ✎ "Downloaded: " + |data| + " bytes"
+∀ url ∈ urls : (
+    data ← ↽_results url;
+    ✎("Downloaded: " + size(data) + " bytes")
+)
 ```
 
 #### File Processing with RAII
 ```mpl
 -- Process file with automatic cleanup
 processFile ≜ λpath: 〔
-    file ← ⊕open(path)      -- Acquire
-    lines ← readLines(file)
-    
-    ∀ line ∈ lines:
-        words ← split(line, " ")
-        ✎ "Word count: " + |words|
-    
-    -- file automatically released here
-〕
+    file ← open(path) ⊕;    -- Acquire
+    lines ← readLines(file);
+
+    ∀ line ∈ lines : (
+        words ← split(line, " ");
+        ✎("Word count: " + count(words))
+    )
+
+    {- file automatically released here -}
+〕;
 ```
 
 ### B.3 Real-World Application Examples
 
 #### Data Analysis
-```mpl
--- Statistical analysis
+∑, √ and ² are M1, so the statistics sketch is fenced as plain text:
+
+```text
+-- Statistical analysis   (M1+ design sketch, not yet parseable)
 analyze ≜ λdata:
-    n ← |data|
-    μ ← (Σ x ∈ data: x) ÷ n        -- mean
-    σ² ← (Σ x ∈ data: (x-μ)²) ÷ n  -- variance
-    σ ← √σ²                         -- std dev
-    
-    ✎ "n=" + n + ", μ=" + μ + ", σ=" + σ
+    n ← |data|;
+    μ ← (∑ x ∈ data: x) ÷ n;
+    σ² ← (∑ x ∈ data: (x-μ)²) ÷ n;
+    σ ← √σ²;
+    ✎("n=" + n + ", μ=" + μ + ", σ=" + σ)
 ```
 
 #### Simple Web Server
-```mpl
--- HTTP server
-server ≜ λport: 
-    ∀ req ∈ listen(port):
-        -- Handle request in parallel
-        handleRequest(req) ‖
-        
+Record field access (`req.path`) is M1, so the HTTP-server sketch is
+fenced as plain text:
+
+```text
+-- HTTP server   (M1+ design sketch, not yet parseable)
+server ≜ λport: ∀ req ∈ listen(port): handleRequest(req) ‖ acceptNext();
+
 handleRequest ≜ λreq:
-    req.path = "/" ⟹ 
-        respond(200, "<h1>Welcome!</h1>")
-    req.path = "/api/data" ⟹
-        respond(200, getData())
-    true ⟹  -- default case
-        respond(404, "Not found")
+    (req.path = "/" ⟹ respond(200, "<h1>Welcome!</h1>")) |
+    (req.path = "/api/data" ⟹ respond(200, getData())) |
+    respond(404, "Not found")
 ```
 
 #### Machine Learning - Perceptron
-```mpl
--- Simple perceptron
-perceptron ≜ λweights,bias:
-    λinputs: 
-        z ← (Σ i ∈ [1..|inputs|]: 
-            weights[i] × inputs[i]) + bias
-        z > 0 ⟹ 1 ∣ 0  -- Step activation
+∑, indexing and field access are M1, so the perceptron sketch is fenced
+as plain text:
 
--- Training step
-train ≜ λp,inputs,target,α:
-    output ← p(inputs)
-    error ← target - output
-    
-    -- Update weights
-    ∀ i ∈ [1..|inputs|]:
-        p.weights[i] ← p.weights[i] + α×error×inputs[i]
-    
+```text
+-- Simple perceptron   (M1+ design sketch, not yet parseable)
+perceptron ≜ λweights, bias:
+    λinputs:
+        z ← (∑ i ∈ [1..|inputs|]: weights[i] × inputs[i]) + bias;
+        (z > 0 ⟹ 1) | 0   -- Step activation
+
+train ≜ λp, inputs, target, α:
+    output ← p(inputs);
+    error ← target - output;
+    ∀ i ∈ [1..|inputs|]: p.weights[i] ← p.weights[i] + α×error×inputs[i];
     p.bias ← p.bias + α×error
 ```
 
 ## Appendix C: Grammar Validation
 
-### C.1 ANTLR 4 Grammar Statistics
+### C.1 ANTLR 4 Grammar Validation
 
-**Grammar Metrics:**
-- Total Lines: 373
-- Parser Rules: 32
-- Lexer Rules: 89
-- Unique Operators: 71
-- Precedence Levels: 12
-- Unicode Code Points: 76
+The authoritative grammar is [`MPL.g4`](../src/main/antlr4/MPL.g4). Instead
+of quoting statistics that drift, CI enforces these properties on every push:
 
-**Validation Results:**
-```
-ANTLR 4.9.3 Grammar Analysis
-============================
-Grammar: MPL.g4
-Conflicts: 0
-Ambiguities: 0
-Left Recursion: Resolved
-Start Symbol: program
-Target: Java
-```
+- The grammar compiles under ANTLR 4.13 with **warnings treated as errors**
+  (`-Werror`), so left recursion, token shadowing and unreachable
+  alternatives fail the build
+- All ten example programs parse (`./gradlew parseExamples`)
+- Every ```mpl code block in the documentation parses (`DocumentationTest`)
+- Start symbol: `program`; target: Java
 
 ### C.2 Precedence Table
 
-Full precedence hierarchy with examples:
+Authoritative copy: [`precedence.csv`](../precedence.csv).
 
 | Level | Operators | Example | Parses As |
 |-------|-----------|---------|-----------|
-| -2 | `;` | `a; b; c` | `((a); b); c` |
+| 11 | `f(a,b)` `‧` `⊕` `⊖` `↴{…}` | `M‧f(x)⊕` | `((M‧f)(x))⊕` |
+| 10 | `↯ ✎ ⧈ ⏲ -` (prefix), `⇀_ch ↽_ch` | `✎ -a` | `✎(-a)` |
+| 9 | `∘` | `f ∘ g ∘ h` | `(f ∘ g) ∘ h` |
+| 8 | `×,÷,∗` | `a × b ÷ c` | `(a × b) ÷ c` |
+| 7 | `+,-` | `a + b - c` | `(a + b) - c` |
+| 6 | `=,≠,<,>,≤,≥,≈,∼` | `a < b = c` | Error (non-assoc) |
+| 5 | `∧` | `a ∧ b ∧ c` | `(a ∧ b) ∧ c` |
+| 4 | `∨` | `a ∨ b ∨ c` | `(a ∨ b) ∨ c` |
+| 3 | `⟹` | `a ⟹ b ⟹ c` | `a ⟹ (b ⟹ c)` |
+| 2 | `\|` | `a ⟹ b \| c` | `(a ⟹ b) \| c` |
+| 1 | `←` | `a ← b ← c` | `a ← (b ← c)` |
+| 0 | `≜` | `f ≜ g ≜ h` | `f ≜ (g ≜ h)` |
 | -1 | `‖` | `a ‖ b ‖ c` | `(a ‖ b) ‖ c` |
-| 0 | `←` | `a ← b ← c` | `a ← (b ← c)` |
-| 1 | `⟹` | `a ⟹ b ⟹ c` | `a ⟹ (b ⟹ c)` |
-| 2 | `∨` | `a ∨ b ∨ c` | `(a ∨ b) ∨ c` |
-| 3 | `∧` | `a ∧ b ∧ c` | `(a ∧ b) ∧ c` |
-| 4 | `=,<,>` | `a < b = c` | Error (non-assoc) |
-| 5 | `+,-` | `a + b - c` | `(a + b) - c` |
-| 6 | `×,÷` | `a × b ÷ c` | `(a × b) ÷ c` |
-| 7 | `^` | `a ^ b ^ c` | `a ^ (b ^ c)` |
-| 8 | `√,¬,↯` | `√√a` | `√(√a)` |
-| 9 | _(app)_ | `f g h` | `(f g) h` |
+| -2 | `;` | `a; b; c` | `(a; b); c` |
 
-### C.3 Ambiguity Resolution Examples
+### C.3 Disambiguation Rules
 
 **Lambda vs Variable λ**
-- Context: `λ` as operator vs Greek variable
-- Resolution: Grammar rule precedence
-- Test: `λ ← λx: x` parses correctly
+- Context: `λ` opens a lambda and is also a Greek variable
+- Resolution: one token (`LAMBDA_VAR`); the parser decides by position
+- Test: `λ ← λx: x;` parses (assign a lambda to the variable λ)
 
-**Application vs Multiplication**
-- Context: `f g` (application) vs `a × b`
-- Resolution: Whitespace-sensitive lexing
-- Test: `f g×h` parses as `App(f, Mul(g, h))`
+**Braces: record vs set vs block**
+- `{a: e, …}` is a record, `{a, b, …}` (two or more elements) is a set,
+  everything else — including `{}` and `{x}` — is a block
+- A singleton set literal cannot be written in M0 (documented in
+  DECISIONS.md)
+
+**The bar `|`**
+- One BAR token serves guarded alternatives; the `|` inside `⟨a|b⟩` is the
+  guarded-alternative level of the inner expression
 
 ## Appendix D: Symbol Pedagogy Guide
 
@@ -388,7 +277,7 @@ Full precedence hierarchy with examples:
 **Progressive Introduction**:
 1. Start with simple: `λx: x + 1`
 2. Multiple parameters: `λx,y: x + y`
-3. With conditions: `λn: n > 0 ⟹ n ∣ 0`
+3. With conditions: `λn: (n > 0 ⟹ n) | 0`
 
 #### Teaching ∀ (For All/Loops)
 **Physical Activity**: "Everyone Does"
@@ -400,9 +289,9 @@ Full precedence hierarchy with examples:
 - ∀ x ∈ {1,2,3}: means "do for 1, then 2, then 3"
 
 **Code Progression**:
-1. Simple iteration: `∀ n ∈ [1..5]: ✎ n`
+1. Simple iteration: `∀ n ∈ [1, 2, 3, 4, 5] : ✎ n`
 2. With accumulation: `∀ n ∈ list: sum ← sum + n`
-3. Nested loops: `∀ i ∈ [1..3]: ∀ j ∈ [1..3]: ✎(i,j)`
+3. Nested loops: `∀ i ∈ [1, 2, 3] : ∀ j ∈ [1, 2, 3] : ✎(i + j)`
 
 #### Teaching ✎ (Output)
 **Physical Activity**: "Pencil and Paper"
@@ -427,13 +316,13 @@ Full precedence hierarchy with examples:
 
 **Week 3: Control Flow**
 - ⟹ (if-then)
-- ∣ (else)
+- | (fallback: `(condition ⟹ result) | fallback`)
 - Simple conditions
 
 **Week 4: Loops**
 - ∀ (for all)
 - ∈ (element of)
-- Ranges: [1..10]
+- List literals: [1, 2, 3]
 
 **Week 5: Functions**
 - λ (lambda)
@@ -447,12 +336,13 @@ Full precedence hierarchy with examples:
 
 ## Appendix E: Implementation Details
 
-### E.1 Unicode Normalization
+### E.1 Unicode Normalization (planned)
 
-All input undergoes Unicode normalization to NFC:
+Input should undergo Unicode normalization to NFC before lexing. This is
+planned; the current parser consumes code points as-is:
 
 ```java
-// Ensure consistent handling
+// Planned: ensure consistent handling
 String normalize(String input) {
     return Normalizer.normalize(input, Normalizer.Form.NFC);
 }
@@ -464,22 +354,28 @@ Context-aware error reporting maintains symbol clarity:
 
 ```
 Error at line 3:14: Expected '⟹' after condition
-  x < 0 ∣ "negative"
+  x < 0 | "negative"
         ^
-Hint: Use '⟹' for if-then. '∣' is only for else-branches.
+Hint: A guard needs an arrow: (x < 0 ⟹ "negative") | fallback.
 ```
+
+(Illustrative; today the parser emits standard ANTLR diagnostics.)
 
 ### E.3 ASCII Escape Processing
 
-Flexible escape sequences with shortcuts:
+Each glyph has exactly one ASCII escape, defined as a lexer alternative
+(the full table is [`glyph-escapes.md`](../glyph-escapes.md)):
 
 ```antlr
-LAMBDA : 'λ' | '\\lambda' | '\\lam' ;
-FORALL : '∀' | '\\forall' | '\\all' ;
-IMPLIES : '⟹' | '\\implies' | '\\=>' ;
+LAMBDA_VAR : 'λ' | '\\lambda' ;
+FORALL     : '∀' | '\\forall' ;
+IMPLIES    : '⟹' | '\\implies' ;
 ```
 
-## Appendix F: Input Method Documentation
+## Appendix F: Input Method Documentation (envisioned)
+
+Only the ASCII escapes exist today; everything else in this appendix is
+tooling we want to build.
 
 ### F.1 Visual Palette
 
@@ -491,10 +387,11 @@ IMPLIES : '⟹' | '\\implies' | '\\=>' ;
 
 ### F.2 Text Shortcuts
 
-**Common Patterns**:
-- `\lam` → λ (shorter than `\lambda`)
-- `\all` → ∀ (shorter than `\forall`)
-- `->` → → (arrow shortcuts)
+The lexer accepts exactly one escape per glyph (`\lambda`, `\forall`, …).
+Editor-side auto-replace could additionally offer shorthand that expands to
+the glyph before the code ever reaches the lexer:
+
+- `\lam` → λ (editor expands; the lexer itself only accepts `\lambda`)
 - `:=` → ≜ (definition)
 - `!=` → ≠ (not equal)
 

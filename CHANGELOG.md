@@ -8,17 +8,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Comprehensive enterprise-level documentation structure
-- AGPLv3 license for strong copyleft protection
-- Complete contribution guidelines with Fatima Test emphasis
-- Security policy for vulnerability reporting
-- Code of conduct emphasizing language inclusivity
-- Enhanced .gitignore for comprehensive coverage
+- Gradle wrapper, so `./gradlew build` works from a fresh clone
+- CI workflow: grammar build (ANTLR warnings are errors), tests, example parsing
+- Documentation test: every ```mpl code block in README, spec and whitepaper must parse
+- Canonical call syntax `f(a, b)` with nullary calls `f()`
+- Wired-in operators: `≜` definition, `⊕`/`⊖` postfix resources, `⇀_ch`/`↽_ch` channels, `‧` module access, unary minus, `/` as ASCII alias of `÷`
+- DECISIONS.md recording each design resolution with rejected alternatives
 
 ### Changed
+- One canonical form per construct: guarded alternatives `(c ⟹ r) | fallback`, `✎` output, `↯pattern ⟹ expr` handler clauses, exactly one ASCII escape per glyph
+- `;` has a single role (sequence separator, trailing permitted)
+- Identifiers may no longer start with `_`, so subscripts lex correctly
+- precedence.csv and glyph-escapes.md regenerated to match the grammar exactly
+- README claims reduced to what CI verifies
+- Comprehensive enterprise-level documentation structure
+- AGPLv3 license for strong copyleft protection (changed from MIT)
 - README transformed into moonshot vision document emphasizing cognitive justice
-- License changed from MIT to AGPLv3 for community protection
 - Whitepaper updated to v2.0 with educational narrative focus
+
+### Fixed
+- Grammar compiles: removed mutual left recursion (errors 119/148) and shadowed tokens (warning 184)
+- Generated parser package no longer declared twice
+- Gradle finds the grammar (src/main/antlr4) and the ParseExamples main class
+- Test harness uses CharStreams; supplementary-plane glyphs (𝔹, 𝓜, 🖫) now tokenize
+- Examples 03 and 05 parse (canonical handler arrow; real placeholder body)
+
+### Removed
+- Dead tokens with no parser rule: `?` (QUERY), `∃`, `⇐`, `→`, `.`
+- Juxtaposition function application (`f x`)
+- C-style ternary and `📤` from all documentation
 
 ## [2.0.0] - 2025-01-26
 

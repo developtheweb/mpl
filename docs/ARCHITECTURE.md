@@ -2,6 +2,11 @@
 
 This document describes the high-level architecture of the Mathematical Programming Language (MPL) implementation.
 
+**Status**: only the lexing and parsing layers exist today (see the README's
+project status). Everything from semantic analysis down — and the runtime,
+error-message, performance and security sections below — describes the
+*target* architecture, not shipped code.
+
 ## Overview
 
 MPL is designed as a multi-layer system that transforms mathematical notation into executable code:
@@ -60,22 +65,22 @@ MPL is designed as a multi-layer system that transforms mathematical notation in
 ### 1. Grammar Definition (`src/main/antlr4/MPL.g4`)
 
 The heart of MPL is its ANTLR 4 grammar that defines:
-- **70+ Mathematical Operators**: From basic arithmetic to advanced calculus
+- **Mathematical Operators**: every glyph with exactly one meaning and one ASCII escape ([glyph-escapes.md](../glyph-escapes.md))
 - **Effect Operators**: Exception handling (↯/↴), concurrency (‖), resources (⊕/⊖)
-- **Precedence Rules**: Mathematically consistent operator precedence
-- **Zero Conflicts**: No shift/reduce or reduce/reduce conflicts
+- **Precedence Rules**: a documented chain ([precedence.csv](../precedence.csv))
+- **CI-clean**: compiles with zero ANTLR errors and warnings (`-Werror`)
 
-Key grammar features:
+Key grammar rules (excerpted from the real grammar):
 ```antlr
-// Example: Function definition
-functionDef : name=IDENTIFIER '≜' lambda ;
-lambda      : 'λ' params ':' expression ;
+// Definition and assignment levels of the precedence chain
+defExpr    : assignExpr (DEFINITION defExpr)? ;      // x ≜ e
+assignExpr : condExpr (LEFTARROW assignExpr)? ;      // x ← e
 
-// Example: Mathematical operations
-expression  : expression '×' expression    # Multiplication
-            | expression '÷' expression    # Division
-            | '∑' '(' var '∈' range ':' expression ')' # Summation
-            ;
+// Guarded alternatives: (condition ⟹ result) | fallback
+condExpr   : impliesExpr (BAR impliesExpr)* ;
+
+// λx: body, λx,y: body, λx∈ℝ: body
+lambda     : LAMBDA_VAR pattern (IN condExpr)? COLON expr ;
 ```
 
 ### 2. Symbol System
@@ -83,21 +88,20 @@ expression  : expression '×' expression    # Multiplication
 MPL uses a three-tier symbol system:
 
 1. **Unicode Symbols** (Primary)
-   - Direct mathematical notation: ∀, ∃, λ, ∑, ∏
+   - Direct mathematical notation: ∀, λ, ∈, ⟹
    - Effect operators: ↯, ↴, ‖, ⇀, ↽
-   - Type symbols: ℕ, ℤ, ℝ, ℂ, 𝔹
+   - Type symbols: ℕ, ℤ, ℚ, ℝ, ℂ, 𝔹
 
 2. **ASCII Escapes** (Fallback)
-   - Every symbol has an escape: `\forall`, `\lambda`, `\sum`
-   - Bidirectional conversion supported
-   - Defined in `glyph-escapes.md`
+   - Every symbol has exactly one escape: `\forall`, `\lambda`, …
+   - Defined in `glyph-escapes.md` (kept in lockstep with the lexer)
 
 3. **Multi-Modal Input** (Future)
    - Voice recognition for mathematical terms
    - Visual palette selection
    - Handwriting recognition
 
-### 3. Type System
+### 3. Type System (planned, M1)
 
 MPL features a hybrid type system:
 
@@ -146,7 +150,7 @@ MPLVisitor visitor = new MPLASTBuilder();
 AST ast = visitor.visit(tree);
 ```
 
-### 6. Runtime Architecture
+### 6. Runtime Architecture (planned)
 
 The MPL runtime provides:
 
@@ -180,43 +184,43 @@ The MPL runtime provides:
 3. AST construction
 4. Syntax error recovery
 
-### Phase 3: Semantic Analysis
+### Phase 3: Semantic Analysis (planned)
 1. Symbol table construction
 2. Type inference
 3. Effect analysis
 4. Semantic error checking
 
-### Phase 4: Optimization
+### Phase 4: Optimization (planned)
 1. Constant folding
 2. Common subexpression elimination
 3. Parallelism detection
 4. Effect optimization
 
-### Phase 5: Code Generation
+### Phase 5: Code Generation (planned)
 Options for different targets:
 - **JVM Bytecode**: For Java interoperability
 - **LLVM IR**: For native compilation
 - **JavaScript**: For web execution
 - **Python**: For educational use
 
-## Error Handling
+## Error Handling (planned)
 
-MPL provides comprehensive error messages with:
+Today the parser emits standard ANTLR diagnostics. The goal is comprehensive error messages with:
 1. **Unicode-aware positioning**: Correct column numbers for multi-byte characters
 2. **Multi-language messages**: Errors in user's native language
 3. **Visual error display**: Highlighting problematic symbols
 4. **Suggestion system**: Common fixes for typical mistakes
 
-Example error:
+Envisioned example error:
 ```
-Error at line 3, column 15:
-  ∑(i ∈ [1,10] : i²²)
-                  ^^
-  Syntax error: Unexpected ² after ²
-  Did you mean: i² × ²  or  i⁴?
+Error at line 3, column 12:
+  (x > 0 ⟹ x | -x
+             ^
+  Syntax error: missing ')' before '|'
+  Guarded alternatives read: (condition ⟹ result) | fallback
 ```
 
-## Performance Considerations
+## Performance Considerations (planned)
 
 1. **Parser Performance**
    - O(n) parsing for most constructs
@@ -242,7 +246,7 @@ The architecture supports extensions via:
 3. **Effect Extensions**: New computational effects
 4. **Backend Extensions**: Additional compilation targets
 
-## Security Considerations
+## Security Considerations (planned)
 
 1. **Input Validation**
    - Unicode homograph detection

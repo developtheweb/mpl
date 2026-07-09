@@ -89,6 +89,7 @@ public class LexerTest extends MPLTestBase {
     public void testModuleAccess() throws IOException {
         assertTokenTypes("Mathematics‧sin",
             MPLLexer.IDENTIFIER, MPLLexer.MIDDOT, MPLLexer.IDENTIFIER);
+        assertTokenTypes("\\middot", MPLLexer.MIDDOT);
     }
     
     @Test

@@ -6,7 +6,7 @@
 
 ## Abstract
 
-In a school in Cairo, a 10-year-old girl named Fatima watches her teacher write a simple computer program on the board. The code is full of foreign words that might as well be magic spells to her Arabic-speaking mind. This scene repeats in classrooms worldwide, where virtually all mainstream programming languages impose English keywords as fundamental syntax, creating cognitive friction for the 80% of humanity who don't speak English. This paper presents Mathematical Programming Language (MPL), a novel approach that replaces traditional keywords with mathematical notation—humanity's existing universal language. MPL demonstrates that a complete, production-ready programming language can be built entirely from mathematical symbols while maintaining full expressiveness across all programming paradigms. Our implementation consists of an ANTLR 4 grammar supporting over 70 Unicode mathematical operators, 24 Greek letter variables, and novel effect operators for computational effects. Through hypothetical scenarios like a student's journey from printing "Jambo!" to teaching peers within one year, we envision potential improvements in learning metrics: First Program Time could be reduced from days to minutes, retention rates might exceed traditional approaches, and teachers could enthusiastically adopt MPL in non-English classrooms. MPL proves that cognitive universality in programming languages is not just theoretically possible but practically achievable, opening a path toward truly global programming tools that transcend linguistic boundaries and enable cognitive justice in technology education.
+In a school in Cairo, a 10-year-old girl named Fatima watches her teacher write a simple computer program on the board. The code is full of foreign words that might as well be magic spells to her Arabic-speaking mind. This scene repeats in classrooms worldwide, where virtually all mainstream programming languages impose English keywords as fundamental syntax, creating cognitive friction for the 80% of humanity who don't speak English. This paper presents Mathematical Programming Language (MPL), a novel approach that replaces traditional keywords with mathematical notation—humanity's existing universal language. MPL demonstrates that a programming language can be built entirely from mathematical symbols; the current milestone is a fully working parser, with execution to follow. Our implementation consists of an ANTLR 4 grammar supporting over 70 Unicode mathematical operators, 24 Greek letter variables, and novel effect operators for computational effects. Through hypothetical scenarios like a student's journey from printing "Jambo!" to teaching peers within one year, we envision potential improvements in learning metrics: First Program Time could be reduced from days to minutes, retention rates might exceed traditional approaches, and teachers could enthusiastically adopt MPL in non-English classrooms. MPL proves that cognitive universality in programming languages is not just theoretically possible but practically achievable, opening a path toward truly global programming tools that transcend linguistic boundaries and enable cognitive justice in technology education.
 
 ## I. Introduction
 
@@ -98,7 +98,7 @@ MPL builds on established mathematical notation:
 - **Logical Operators**: ∧ (and), ∨ (or), ¬ (not), ⟹ (implies)
 - **Quantifiers**: ∀ (forall), ∃ (exists), λ (lambda)
 - **Relations**: =, ≠, <, ≤, ≈
-- **Arithmetic**: +, -, ×, ÷, ^, √
+- **Arithmetic**: +, -, ×, ÷ (^ and √ arrive with defined semantics in M1)
 - **Types**: ℕ (natural), ℤ (integer), ℝ (real), 𝔹 (boolean)
 
 ### B. Programming Extensions
@@ -111,7 +111,7 @@ MPL introduces intuitive symbols for computational concepts:
 - **Concurrency**: ‖ (parallel bars) for parallel execution
 - **Resources**: ⊕/⊖ (circled plus/minus) for acquire/release
 
-These symbols were chosen through extensive testing with educators and children, ensuring each passes the Fatima Test.
+These symbols were chosen to pass the Fatima Test; empirical validation with educators and children is planned, not yet performed.
 
 ### C. Real Code Examples
 
@@ -124,9 +124,9 @@ Here's "Hello World" in MPL – as simple as a hypothetical student's first prog
 A more complex example calculating rectangle area:
 
 ```mpl
-ℓ ← 5
-w ← 3
-A ← ℓ × w
+L ← 5;
+w ← 3;
+A ← L × w;
 ✎ A
 ```
 
@@ -136,26 +136,30 @@ A ← ℓ × w
 
 The MPL implementation consists of:
 
-- **ANTLR 4 Grammar**: 373 lines defining complete syntax
-- **Unicode Normalization**: Ensures é and é are treated identically
-- **ASCII Fallbacks**: Every symbol has text escapes (λ → `\lambda`)
-- **Multi-platform Support**: Runs on any Unicode-capable system
+- **ANTLR 4 Grammar**: the complete M0 syntax, compiled with warnings treated as errors
+- **ASCII Fallbacks**: every symbol has exactly one text escape (λ → `\lambda`)
+- **Multi-platform Support**: runs on any Unicode-capable system
+- **Unicode Normalization**: planned (the parser currently consumes code points as-is)
 
 ### B. Parser Validation
 
-- Zero ambiguities across all test programs
-- 12-level precedence hierarchy matching mathematical conventions
-- Round-trip testing between Unicode and ASCII forms
-- Tested on example programs
+Everything in this list is enforced by CI on every push:
 
-### C. Educational Tools
+- The grammar compiles with zero ANTLR errors and zero warnings
+- All ten example programs parse
+- Every ```mpl code block in the project documentation parses
+- The precedence chain is documented in `precedence.csv` and exercised by the test suite
 
-Beyond the core language, we've developed:
+### C. Educational Tools (envisioned)
+
+Beyond the core language, we envision:
 
 - Visual symbol palettes for beginners
 - Voice input for multiple languages
 - Handwriting recognition for natural input
 - Integration with standard editors
+
+None of these exist yet; today the ASCII escapes are the portable input method.
 
 ## VI. Evaluation
 
@@ -171,16 +175,16 @@ Hypothesis: First Program Time could be minutes rather than days.
 
 **Building on math knowledge**: They could apply familiar mathematical concepts:
 ```mpl
-ℓ ← 5
-w ← 3
-A ← ℓ × w
+L ← 5;
+w ← 3;
+A ← L × w;
 ✎ A
 ```
 
 **Advanced concepts**: Mathematical notation could make loops intuitive:
 ```mpl
-Σ ← 0
-∀ n ∈ [1..10]: Σ ← Σ + n
+total ← 0;
+∀ n ∈ [1, 2, 3, 4, 5] : total ← total + n
 ```
 
 **Potential outcome**: Students might progress from beginners to teaching others within a year.
@@ -201,10 +205,9 @@ We hypothesize that MPL could improve three key metrics:
 
 While human outcomes are primary, technical validation shows:
 
-- Complete coverage of programming paradigms
-- 70+ operators handling all computational needs
-- Successful parsing of complex real-world programs
-- No loss of expressiveness compared to English-based languages
+- The ten example programs cover functional, concurrent, resource-managed, metaprogramming and module-based code, and all parse in CI
+- Every symbol has exactly one meaning and one ASCII escape
+- The M0 grammar compiles with zero ANTLR errors and warnings
 
 ### D. Current Implementation Limitations
 
@@ -239,59 +242,59 @@ We hypothesize that pilot programs could reveal:
 
 ## VIII. Real-World Applications
 
-MPL's mathematical syntax proves powerful across domains:
+MPL's mathematical syntax proves powerful across domains. Every block below
+parses with the shipped M0 grammar (this is CI-checked); where richer
+notation (∑, √, ², subscripts, tuples) is planned for M1, the examples use
+plain M0 syntax instead.
 
 ### A. Scientific Computing
 
 ```mpl
--- Runge-Kutta ODE solver
-rk4 ≜ λf,y₀,t₀,t₁,h:
-    steps ← ⌊(t₁ - t₀) ÷ h⌋
-    evolve ← λ(t,y):
-        k₁ ← h × f(t, y)
-        k₂ ← h × f(t + h÷2, y + k₁÷2)
-        k₃ ← h × f(t + h÷2, y + k₂÷2)
-        k₄ ← h × f(t + h, y + k₃)
-        (t + h, y + (k₁ + 2×k₂ + 2×k₃ + k₄)÷6)
-    iterate(evolve, (t₀,y₀), steps)
+-- Fixed-step numerical integration (Euler method)
+euler ≜ λf, y, t, h, steps: ∀step∈countTo(steps): (
+    y ← y + h × f(t, y);
+    t ← t + h
+);
 ```
 
 ### B. Data Processing
 
 ```mpl
 -- Statistical analysis
-data ← loadCSV("measurements.csv")
-μ ← (Σ x ∈ data: x) ÷ |data|
-σ ← √((Σ x ∈ data: (x - μ)²) ÷ |data|)
-✎ "Mean: " + μ + ", StdDev: " + σ
+data ← loadCSV("measurements.csv");
+total ← 0;
+∀ x ∈ data : total ← total + x;
+μ ← total ÷ count(data);
+✎("Mean: " + μ)
 ```
 
 ### C. Web Services
 
 ```mpl
-server ← λport:
-    ∀request ∈ listen(port):
-        response ← handleRequest(request) ‖
-        send(response)
+server ← λport: ∀request ∈ listen(port): (
+    response ← handleRequest(request);
+    ⇀_client response
+) ‖ acceptNext();
 ```
 
 ### D. Machine Learning
 
 ```mpl
 -- Neural network layer
-layer ≜ λW,b,x: σ(W × x + b)
-    where σ ← λz: 1 ÷ (1 + e^(-z))
+σ ≜ λz: 1 ÷ (1 + exp(-z));
+layer ≜ λW, b, x: σ(W × x + b);
 ```
 
 ### E. Systems Programming
 
 ```mpl
 -- Resource management with RAII
-processFile ← λpath:
-    〔file ← ⊕open(path)
-     data ← read(file)
-     parse(data)〕
-    -- file automatically closed
+processFile ← λpath: 〔
+    file ← open(path) ⊕;
+    data ← read(file);
+    parse(data)
+    {- file automatically closed at end of 〔〕 -}
+〕;
 ```
 
 ## IX. Limitations and Future Work
@@ -300,10 +303,10 @@ processFile ← λpath:
 
 From parser to production:
 
-1. **M1 (2025)**: REPL with basic type inference
-2. **M2 (2026)**: Compiler, standard library, IDE integration
-3. **M3 (2027)**: Performance optimization, advanced types
-4. **M4 (2028)**: Production readiness, ecosystem tools
+1. **M1**: REPL with basic type inference
+2. **M2**: Compiler, standard library, IDE integration
+3. **M3**: Performance optimization, advanced types
+4. **M4**: Production readiness, ecosystem tools
 
 ### B. Research Directions
 

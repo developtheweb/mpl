@@ -24,6 +24,17 @@ public class DocumentationTest extends MPLTestBase {
         assertAllMplBlocksParse(Paths.get("README.md"));
     }
 
+    @Test
+    public void testSpecCodeBlocksParse() throws IOException {
+        assertAllMplBlocksParse(Paths.get("math_prog_lang.md"));
+    }
+
+    @Test
+    public void testWhitepaperCodeBlocksParse() throws IOException {
+        assertAllMplBlocksParse(Paths.get("whitepaper", "mpl-whitepaper.md"));
+        assertAllMplBlocksParse(Paths.get("whitepaper", "mpl-whitepaper-appendices.md"));
+    }
+
     private void assertAllMplBlocksParse(Path doc) throws IOException {
         String content = Files.readString(doc);
         Matcher m = MPL_BLOCK.matcher(content);

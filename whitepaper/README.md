@@ -10,12 +10,12 @@ This directory contains the comprehensive academic whitepaper for the Mathematic
    - Complete academic whitepaper in Markdown format
    - Suitable for online viewing and conversion to other formats
    - Includes all sections from Abstract through Conclusion
-   - Features real-world application examples in 5 domains:
-     - Scientific Computing (ODE solvers)
-     - Financial Systems (Black-Scholes, VaR)
-     - Machine Learning (transformers, gradient descent)
-     - Distributed Systems (Raft consensus, KV stores)
-     - Quantum Computing (Grover's algorithm, teleportation)
+   - Features application sketches in 5 domains:
+     - Scientific Computing
+     - Data Processing
+     - Web Services
+     - Machine Learning
+     - Systems Programming
 
 2. **`mpl-whitepaper.tex`** 
    - Conference-ready LaTeX version (IEEE format)
@@ -25,12 +25,11 @@ This directory contains the comprehensive academic whitepaper for the Mathematic
 
 3. **`mpl-whitepaper-appendices.md`**
    - Comprehensive appendices with:
-     - Complete symbol reference (70+ symbols)
-     - Annotated example programs (10 examples)
+     - Symbol reference (pointing to the authoritative glyph-escapes.md)
+     - Annotated example programs
      - Grammar validation details
-     - Performance measurements
      - Implementation details
-     - Future extensions roadmap
+     - Pedagogy and envisioned pilot materials
 
 ## Whitepaper Structure
 
@@ -42,17 +41,17 @@ This directory contains the comprehensive academic whitepaper for the Mathematic
 6. **Implementation** - ANTLR grammar and parser details
 7. **Evaluation** - Completeness, performance, accessibility
 8. **Case Studies** - Concurrency, resources, metaprogramming
-9. **Real-World Applications** - Scientific, financial, ML, distributed, quantum
+9. **Real-World Applications** - Scientific, data, web, ML, systems
 10. **Limitations & Future Work** - Current gaps and research directions
 11. **Conclusion** - Vision for universal programming
 
 ## Key Features Documented
 
-- **70+ Mathematical Symbols**: Complete Unicode operators with ASCII escapes
-- **11 Effect Operators**: Novel symbols for exceptions, concurrency, resources
+- **70+ Mathematical Symbols**: Unicode operators, each with exactly one ASCII escape
+- **Effect Operators**: Novel symbols for exceptions, concurrency, resources
 - **24 Greek Variables**: Full Greek alphabet for identifiers
-- **Zero Ambiguities**: Validated grammar with precedence rules
-- **Paradigm Coverage**: Functional, imperative, concurrent, OO, metaprogramming
+- **CI-Validated Grammar**: Compiles with zero ANTLR errors and warnings; documented precedence
+- **Paradigm Coverage**: Functional, imperative, concurrent, metaprogramming
 
 ## Building the LaTeX Version
 

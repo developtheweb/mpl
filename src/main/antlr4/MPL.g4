@@ -366,7 +366,7 @@ COLON       : ':' ;
 COMMA       : ',' ;
 UNDERSCORE  : '_' ;
 BAR         : '|' ;
-MIDDOT      : '‧' ;
+MIDDOT      : '‧' | '\\middot' ;
 
 // Identifiers. A leading underscore is NOT allowed: subscripts such as
 // ⌉_db_lock and ↽_socket must lex as UNDERSCORE + IDENTIFIER, not as a

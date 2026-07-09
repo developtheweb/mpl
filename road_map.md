@@ -19,7 +19,7 @@ The ANTLR grammar (`MPL.g4`) successfully defines 70+ mathematical symbols and c
    - **Gap**: 100% of type system missing
 
 3. **Effect System Illusion**
-   - Examples: `↴ {↯e ⇒ handler}` implies exception handling
+   - Examples: `↴ {↯e ⟹ handler}` implies exception handling
    - Grammar: Just parses symbols as operators
    - Examples: `〔〕` claims automatic resource cleanup
    - **Gap**: 100% of effect semantics missing
@@ -177,8 +177,12 @@ public class SymbolicError {
 **Goal**: Rich set of mathematical functions without English names
 
 **Code Changes**:
-```mpl
--- Instead of "sort", "map", "filter":
+These signatures are a design sketch for a future milestone — the symbols
+(→, ↑, ∃?, 📖, ✍, ⊤) are not in the M0 grammar, so the block is fenced as
+plain text:
+
+```text
+-- Instead of "sort", "map", "filter":   (design sketch, not yet parseable)
 ↑: List α → List α  -- ascending order (up arrow)
 ∀→: (α → β) → List α → List β  -- universal transformation
 ∃?: (α → 𝔹) → List α → List α  -- exists predicate filter

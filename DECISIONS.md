@@ -27,3 +27,6 @@ against the existing examples.
 - **Exactly one ASCII escape per glyph** (`\lambda` not `\lam`, `\leftarrow` not `\gets`, `\neq` not `\ne`, `\nat` not `\N`, …); rejected: alias sets (two ways to write the same token).
 - **`%` (modulo), `∑`, `√`, `²`, `|x|`, ranges `[a..b]`, indexing/slicing, `where`, and record field access are NOT in M0** — every document says so instead of using them; deferred to M1 with semantics, not smuggled in via prose.
 - **Lambda parameters are a bare comma-separated pattern list** (`λa, b: body`); rejected: parenthesized parameter lists `λ(a, b):` (two ways to write parameters).
+- **`‧` gets the escape `\middot`** so the "every glyph has an ASCII escape" claim stays true; rejected: leaving MIDDOT as the one escape-less glyph.
+- **`glyph-escapes.md` and `precedence.csv` are the only symbol/precedence tables**; the whitepaper appendix points at them instead of duplicating them; rejected: parallel tables that drift (the old appendix disagreed with the lexer on several code points and escapes).
+- **Documentation code blocks are fenced ```mpl only if they parse today**; M1+ sketches are fenced as plain text with an explicit "not yet parseable" caption, and a CI test enforces the rule for README, spec, and whitepaper.
