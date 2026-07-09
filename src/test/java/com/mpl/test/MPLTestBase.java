@@ -34,23 +34,29 @@ public class MPLTestBase {
     }
     
     private ParseTree parseWithErrors(String input, boolean collectErrors, List<String> errorList) throws IOException {
-        ANTLRInputStream inputStream = new ANTLRInputStream(input);
+        // CharStreams works in Unicode code points; the deprecated
+        // ANTLRInputStream fed UTF-16 units and broke on supplementary-plane
+        // glyphs such as 𝔹, 𝓜 and 🖫.
+        CharStream inputStream = CharStreams.fromString(input);
         MPLLexer lexer = new MPLLexer(inputStream);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         MPLParser parser = new MPLParser(tokens);
-        
+
         if (collectErrors && errorList != null) {
-            parser.removeErrorListeners();
-            parser.addErrorListener(new BaseErrorListener() {
+            BaseErrorListener listener = new BaseErrorListener() {
                 @Override
                 public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol,
                                       int line, int charPositionInLine, String msg,
                                       RecognitionException e) {
                     errorList.add(String.format("line %d:%d %s", line, charPositionInLine, msg));
                 }
-            });
+            };
+            lexer.removeErrorListeners();
+            lexer.addErrorListener(listener);
+            parser.removeErrorListeners();
+            parser.addErrorListener(listener);
         }
-        
+
         return parser.program();
     }
     
@@ -84,7 +90,7 @@ public class MPLTestBase {
      * Get all tokens from input
      */
     protected List<Token> tokenize(String input) throws IOException {
-        ANTLRInputStream inputStream = new ANTLRInputStream(input);
+        CharStream inputStream = CharStreams.fromString(input);
         MPLLexer lexer = new MPLLexer(inputStream);
         List<Token> tokens = new ArrayList<>();
         

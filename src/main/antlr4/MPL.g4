@@ -5,56 +5,76 @@ grammar MPL;
 
 // ============================================================================
 // PARSER RULES
+//
+// Structural decisions (see DECISIONS.md for rationale):
+//
+// * SEMICOLON has exactly one role: it separates expressions in a sequence
+//   (`seqExpr`). A trailing semicolon is permitted. There is no separate
+//   "statement terminator" concept; the program, blocks, parenthesized
+//   groups, atomic sections, RAII scopes and code quotations all contain a
+//   single seqExpr.
+//
+// * Braces are disambiguated structurally:
+//     - record: `{ name: expr, ... }`  — at least one `IDENTIFIER : expr`
+//     - set:    `{ a, b, ... }`        — at least TWO comma-separated exprs
+//     - block:  everything else, including `{}` and `{ x }`
+//   A singleton set cannot be written literally (use ∅ and set operations
+//   in M1); singleton braces always parse as a block.
+//
+// * Function calls are `f(a, b)` only — a postfix argument list. Haskell
+//   juxtaposition (`f x`) was removed. Nullary calls `f()` are supported.
+//
+// * ≜ defines (right-associative, binds looser than ←); ← assigns.
+//
+// * Guarded alternatives `(condition ⟹ result) | fallback` are the one
+//   conditional form, wired in as the condExpr precedence level.
 // ============================================================================
 
 program
-    : statement* EOF
-    ;
-
-statement
-    : expr SEMICOLON
-    | expr                      // Allow last statement without semicolon
-    ;
-
-// Expression hierarchy following precedence table (lowest to highest)
-expr
-    : seqExpr                   // Level -2: Statement sequencing
+    : seqExpr? EOF
     ;
 
 seqExpr
-    : parallelExpr (SEMICOLON parallelExpr)*
+    : expr (SEMICOLON expr)* SEMICOLON?
+    ;
+
+// Expression precedence chain, lowest binding first.
+expr
+    : parallelExpr
     ;
 
 parallelExpr
-    : assignExpr (PARALLEL assignExpr)*     // Level -1: Parallel composition
+    : defExpr (PARALLEL defExpr)*           // ‖ parallel composition
+    ;
+
+defExpr
+    : assignExpr (DEFINITION defExpr)?      // ≜ definition (right-assoc)
     ;
 
 assignExpr
-    : condExpr (LEFTARROW assignExpr)?      // Level 0: Assignment (right-assoc)
+    : condExpr (LEFTARROW assignExpr)?      // ← assignment (right-assoc)
     ;
 
 // Guarded alternatives: (condition ⟹ result) | fallback
-// This is the canonical conditional form. It lives in the precedence chain
-// (below assignment, above implication) instead of being a left-recursive
-// standalone rule, which previously caused ANTLR error(119).
+// The one conditional form. The BAR inside ⟨a|b⟩ is also consumed here.
 condExpr
     : impliesExpr (BAR impliesExpr)*
     ;
 
 impliesExpr
-    : orExpr (IMPLIES impliesExpr)?         // Level 1: Implication (right-assoc)
+    : orExpr (IMPLIES impliesExpr)?         // ⟹ guard/implication (right-assoc)
     ;
 
 orExpr
-    : andExpr (OR andExpr)*                 // Level 2: Logical OR (left-assoc)
+    : andExpr (OR andExpr)*                 // ∨ logical OR
     ;
 
 andExpr
-    : compareExpr (AND compareExpr)*        // Level 3: Logical AND (left-assoc)
+    : cmpExpr (AND cmpExpr)*                // ∧ logical AND
     ;
 
-compareExpr
-    : addExpr (compareOp addExpr)?          // Level 4: Comparisons (non-assoc)
+cmpExpr
+    : addExpr (compareOp addExpr)?          // comparisons (non-associative)
     ;
 
 compareOp
@@ -62,48 +82,60 @@ compareOp
     ;
 
 addExpr
-    : mulExpr ((PLUS | MINUS) mulExpr)*     // Level 5: Addition/subtraction
+    : mulExpr ((PLUS | MINUS) mulExpr)*
     ;
 
 mulExpr
-    : composeExpr ((TIMES | DIV | AST) composeExpr)*  // Level 6: Multiplication
+    : composeExpr ((TIMES | DIV | AST) composeExpr)*
     ;
 
 composeExpr
-    : unaryExpr (COMPOSE unaryExpr)*        // Level 7: Composition
+    : unaryExpr (COMPOSE unaryExpr)*        // ∘ function composition
     ;
 
 unaryExpr
-    : prefixOp* postfixExpr                 // Level 8: Prefix operators
+    : (prefixOp | channelOp)* postfixExpr
     ;
 
+// MINUS doubles as unary negation: -x
 prefixOp
-    : RAISE | TRACE | QUERY | BREAK | DELAY
+    : RAISE | TRACE | BREAK | DELAY | MINUS
     ;
 
-// Exception handling is a postfix construct: expr ↴ { ↯name ⇒ handler }
-// Formerly a standalone rule reachable from atomExpr, which cycled back into
-// expr and caused ANTLR error(119) (mutual left recursion).
+// Channel operations are subscripted prefix operators: ⇀_ch expr, ↽_ch expr
+channelOp
+    : (SEND | RECEIVE) UNDERSCORE IDENTIFIER
+    ;
+
+// Postfix operators: call, qualified access, resource alloc/release, handler.
 postfixExpr
-    : appExpr handlerSuffix*
+    : atomExpr postfixOp*
     ;
 
-handlerSuffix
-    : HANDLE LBRACE handlerClause+ RBRACE
+postfixOp
+    : callArgs                              // f(a, b) — the one call syntax
+    | MIDDOT IDENTIFIER                     // Module‧member
+    | ALLOC                                 // resource ⊕
+    | RELEASE                               // resource ⊖
+    | HANDLE handlerBlock                   // expr ↴ { ↯pat ⟹ expr; ... }
     ;
 
+callArgs
+    : LPAREN (expr (COMMA expr)*)? RPAREN
+    ;
+
+handlerBlock
+    : LBRACE handlerClause (SEMICOLON handlerClause)* SEMICOLON? RBRACE
+    ;
+
+// ↯identifier binds the exception; ↯"literal" matches a specific message.
+// The clause arrow is ⟹, mirroring guarded alternatives.
 handlerClause
-    : RAISE IDENTIFIER EXPORT expr
-    ;
-
-appExpr
-    : atomExpr atomExpr*                    // Level 9: Function application
+    : RAISE (IDENTIFIER | STRING) IMPLIES expr
     ;
 
 atomExpr
-    : primary
-    | LPAREN expr RPAREN
-    | block
+    : LPAREN seqExpr RPAREN
     | lambda
     | forall
     | choiceType
@@ -114,6 +146,10 @@ atomExpr
     | periodicTask
     | moduleDecl
     | pathLiteral
+    | record
+    | set
+    | block
+    | primary
     ;
 
 primary
@@ -128,13 +164,11 @@ primary
     | EMPTYSET
     | typeSymbol
     | list
-    | set
-    | record
     ;
 
 greekVar
     : ALPHA | BETA | GAMMA | DELTA | EPSILON | ZETA | ETA | THETA
-    | IOTA | KAPPA | LAMBDA_VAR | MU | NU | XI | OMICRON | PI 
+    | IOTA | KAPPA | LAMBDA_VAR | MU | NU | XI | OMICRON | PI
     | RHO | SIGMA | TAU | UPSILON | PHI | CHI | PSI | OMEGA
     ;
 
@@ -142,16 +176,13 @@ typeSymbol
     : NAT | INT | RAT | REAL | COMPLEX | BOOL
     ;
 
-block
-    : LBRACE statement* RBRACE
-    ;
-
+// λx: body   λx,y: body   λx∈ℝ: body — parameters are a bare pattern list.
 lambda
-    : LAMBDA_VAR pattern (IN expr)? COLON expr
+    : LAMBDA_VAR pattern (IN condExpr)? COLON expr
     ;
 
 forall
-    : FORALL pattern IN expr COLON expr
+    : FORALL pattern IN condExpr COLON expr
     ;
 
 // The | inside ⟨a|b⟩ is consumed by condExpr, so the rule needs no explicit BAR.
@@ -160,23 +191,23 @@ choiceType
     ;
 
 atomicSection
-    : LCEIL expr RCEIL (UNDERSCORE IDENTIFIER)?
+    : LCEIL seqExpr RCEIL (UNDERSCORE IDENTIFIER)?
     ;
 
 raiiScope
-    : LRAII statement* RRAII
+    : LRAII seqExpr? RRAII
     ;
 
 codeQuote
-    : ULCORNER expr URCORNER
+    : ULCORNER seqExpr URCORNER
     ;
 
 codeEval
-    : LLCORNER expr LRCORNER
+    : LLCORNER seqExpr LRCORNER
     ;
 
 periodicTask
-    : PERIODIC LPAREN expr COMMA NUMBER IDENTIFIER? RPAREN
+    : PERIODIC LPAREN seqExpr COMMA NUMBER IDENTIFIER? RPAREN
     ;
 
 moduleDecl
@@ -184,7 +215,7 @@ moduleDecl
     ;
 
 pathLiteral
-    : PATH STRING
+    : PATH (STRING | IDENTIFIER)
     ;
 
 // Rewritten from the left-recursive, empty-tail form that caused error(148).
@@ -202,8 +233,9 @@ list
     : LBRACK (expr (COMMA expr)*)? RBRACK
     ;
 
+// At least two elements — singleton braces parse as a block (see header note).
 set
-    : LBRACE (expr (COMMA expr)*)? RBRACE
+    : LBRACE expr (COMMA expr)+ RBRACE
     ;
 
 record
@@ -214,8 +246,15 @@ fieldAssignment
     : IDENTIFIER COLON expr
     ;
 
+block
+    : LBRACE seqExpr? RBRACE
+    ;
+
 // ============================================================================
 // LEXER RULES
+//
+// Exactly one ASCII escape per glyph (One Right Answer). The authoritative
+// escape table is glyph-escapes.md, which must match these rules exactly.
 // ============================================================================
 
 // Keywords
@@ -234,7 +273,7 @@ ETA         : 'η' | '\\eta' ;
 THETA       : 'θ' | '\\theta' ;
 IOTA        : 'ι' | '\\iota' ;
 KAPPA       : 'κ' | '\\kappa' ;
-LAMBDA_VAR  : 'λ' | '\\lambda' | '\\lam' ;
+LAMBDA_VAR  : 'λ' | '\\lambda' ;
 MU          : 'μ' | '\\mu' ;
 NU          : 'ν' | '\\nu' ;
 XI          : 'ξ' | '\\xi' ;
@@ -250,41 +289,40 @@ PSI         : 'ψ' | '\\psi' ;
 OMEGA       : 'ω' | '\\omega' ;
 
 // Type symbols
-NAT         : 'ℕ' | '\\nat' | '\\N' ;
-INT         : 'ℤ' | '\\int' | '\\Z' ;
-RAT         : 'ℚ' | '\\rat' | '\\Q' ;
-REAL        : 'ℝ' | '\\real' | '\\R' ;
-COMPLEX     : 'ℂ' | '\\complex' | '\\C' ;
-BOOL        : '𝔹' | '\\bool' | '\\B' ;
+NAT         : 'ℕ' | '\\nat' ;
+INT         : 'ℤ' | '\\int' ;
+RAT         : 'ℚ' | '\\rat' ;
+REAL        : 'ℝ' | '\\real' ;
+COMPLEX     : 'ℂ' | '\\complex' ;
+BOOL        : '𝔹' | '\\bool' ;
 
 // Operators by precedence
 SEMICOLON   : ';' ;
 PARALLEL    : '‖' | '\\parallel' ;
-LEFTARROW   : '←' | '\\leftarrow' | '\\gets' ;
+LEFTARROW   : '←' | '\\leftarrow' ;
 // '\Rightarrow' belongs to EXPORT (⇒); giving it to IMPLIES too fully
 // shadowed EXPORT's escape (ANTLR warning 184).
 IMPLIES     : '⟹' | '\\implies' ;
-OR          : '∨' | '\\or' | '\\vee' ;
-AND         : '∧' | '\\and' | '\\wedge' ;
+OR          : '∨' | '\\or' ;
+AND         : '∧' | '\\and' ;
 EQ          : '=' ;
-NEQ         : '≠' | '\\neq' | '\\ne' ;
+NEQ         : '≠' | '\\neq' ;
 LT          : '<' ;
 GT          : '>' ;
-LEQ         : '≤' | '\\leq' | '\\le' ;
-GEQ         : '≥' | '\\geq' | '\\ge' ;
+LEQ         : '≤' | '\\leq' ;
+GEQ         : '≥' | '\\geq' ;
 APPROX      : '≈' | '\\approx' ;
 SIM         : '∼' | '\\sim' ;
 PLUS        : '+' ;
 MINUS       : '-' ;
 TIMES       : '×' | '\\times' ;
-DIV         : '÷' | '\\div' ;
+DIV         : '÷' | '\\div' | '/' ;
 AST         : '∗' | '\\ast' ;
 COMPOSE     : '∘' | '\\circ' ;
 
 // Unary operators
 RAISE       : '↯' | '\\raise' ;
 TRACE       : '✎' | '\\trace' ;
-QUERY       : '?' | '\\query' ;
 BREAK       : '⧈' | '\\break' ;
 DELAY       : '⏲' | '\\delay' ;
 
@@ -292,13 +330,11 @@ DELAY       : '⏲' | '\\delay' ;
 // (LAMBDA was fully shadowed by LAMBDA_VAR — warning 184; LAMBDA_VAR is the
 // single λ token and the lambda parser rule uses it.)
 FORALL      : '∀' | '\\forall' ;
-EXISTS      : '∃' | '\\exists' ;
 DEFINITION  : '≜' | '\\coloneq' ;
 HANDLE      : '↴' | '\\handle' ;
 ALLOC       : '⊕' | '\\oplus' ;
 RELEASE     : '⊖' | '\\ominus' ;
 MODULE      : '𝓜' | '\\module' ;
-IMPORT      : '⇐' | '\\Leftarrow' ;
 EXPORT      : '⇒' | '\\Rightarrow' ;
 SEND        : '⇀' | '\\send' ;
 RECEIVE     : '↽' | '\\receive' ;
@@ -328,15 +364,15 @@ LRCORNER    : '⌟' | '\\lrcorner' ;
 // Other symbols
 COLON       : ':' ;
 COMMA       : ',' ;
-DOT         : '.' ;
 UNDERSCORE  : '_' ;
 BAR         : '|' ;
-ARROW       : '→' | '\\rightarrow' | '\\to' ;
 MIDDOT      : '‧' ;
 
-// Identifiers
+// Identifiers. A leading underscore is NOT allowed: subscripts such as
+// ⌉_db_lock and ↽_socket must lex as UNDERSCORE + IDENTIFIER, not as a
+// single identifier "_db_lock".
 IDENTIFIER
-    : [a-zA-Z_][a-zA-Z0-9_]*
+    : [a-zA-Z][a-zA-Z0-9_]*
     ;
 
 // Numbers

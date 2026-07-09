@@ -59,15 +59,14 @@ public class ParseExamples {
     }
     
     private static void parseFile(Path file) throws IOException {
-        String content = Files.readString(file);
-        
-        ANTLRInputStream input = new ANTLRInputStream(content);
+        // CharStreams works in Unicode code points; the deprecated
+        // ANTLRInputStream broke on supplementary-plane glyphs (𝓜, 🖫).
+        CharStream input = CharStreams.fromPath(file);
         MPLLexer lexer = new MPLLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         MPLParser parser = new MPLParser(tokens);
-        
-        // Collect errors
-        parser.removeErrorListeners();
+
+        // Fail on both lexer and parser errors
         var errorListener = new BaseErrorListener() {
             @Override
             public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol,
@@ -76,8 +75,11 @@ public class ParseExamples {
                 throw new RuntimeException(String.format("line %d:%d %s", line, charPositionInLine, msg));
             }
         };
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(errorListener);
+        parser.removeErrorListeners();
         parser.addErrorListener(errorListener);
-        
+
         // Parse
         parser.program();
     }

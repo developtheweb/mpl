@@ -52,6 +52,7 @@ public class LexerTest extends MPLTestBase {
         assertTokenTypes("-", MPLLexer.MINUS);
         assertTokenTypes("×", MPLLexer.TIMES);
         assertTokenTypes("÷", MPLLexer.DIV);
+        assertTokenTypes("/", MPLLexer.DIV);   // ASCII alias, e.g. π/4
         assertTokenTypes("∗", MPLLexer.AST);
         assertTokenTypes("∘", MPLLexer.COMPOSE);
         
@@ -73,6 +74,21 @@ public class LexerTest extends MPLTestBase {
         // Assignment
         assertTokenTypes("←", MPLLexer.LEFTARROW);
         assertTokenTypes("≜", MPLLexer.DEFINITION);
+    }
+
+    @Test
+    public void testEscapeDisambiguation() throws IOException {
+        // \implies is ⟹ (IMPLIES); \Rightarrow is ⇒ (EXPORT). Formerly both
+        // mapped to IMPLIES, fully shadowing EXPORT's escape (warning 184).
+        assertTokenTypes("\\implies", MPLLexer.IMPLIES);
+        assertTokenTypes("\\Rightarrow", MPLLexer.EXPORT);
+        assertTokenTypes("⇒", MPLLexer.EXPORT);
+    }
+
+    @Test
+    public void testModuleAccess() throws IOException {
+        assertTokenTypes("Mathematics‧sin",
+            MPLLexer.IDENTIFIER, MPLLexer.MIDDOT, MPLLexer.IDENTIFIER);
     }
     
     @Test
@@ -123,9 +139,23 @@ public class LexerTest extends MPLTestBase {
     @Test
     public void testIdentifiers() throws IOException {
         assertTokenTypes("foo", MPLLexer.IDENTIFIER);
-        assertTokenTypes("_bar", MPLLexer.IDENTIFIER);
         assertTokenTypes("baz123", MPLLexer.IDENTIFIER);
         assertTokenTypes("camelCase", MPLLexer.IDENTIFIER);
+        assertTokenTypes("db_lock", MPLLexer.IDENTIFIER);
+    }
+
+    @Test
+    public void testSubscripts() throws IOException {
+        // Identifiers must not start with an underscore, so that subscripted
+        // constructs lex as UNDERSCORE + IDENTIFIER instead of one identifier.
+        // (Previously "⌉_db_lock" lexed as RCEIL + IDENTIFIER "_db_lock".)
+        assertTokenTypes("_bar", MPLLexer.UNDERSCORE, MPLLexer.IDENTIFIER);
+        assertTokenTypes("⌉_db_lock",
+            MPLLexer.RCEIL, MPLLexer.UNDERSCORE, MPLLexer.IDENTIFIER);
+        assertTokenTypes("↽_socket",
+            MPLLexer.RECEIVE, MPLLexer.UNDERSCORE, MPLLexer.IDENTIFIER);
+        assertTokenTypes("⇀_socket",
+            MPLLexer.SEND, MPLLexer.UNDERSCORE, MPLLexer.IDENTIFIER);
     }
     
     @Test
@@ -140,6 +170,8 @@ public class LexerTest extends MPLTestBase {
     public void testPathLiterals() throws IOException {
         assertTokenTypes("🖫 \"path\"", MPLLexer.PATH, MPLLexer.STRING);
         assertTokenTypes("\\path \"path\"", MPLLexer.PATH, MPLLexer.STRING);
+        // Identifier form, e.g. readFile(🖫path)
+        assertTokenTypes("🖫path", MPLLexer.PATH, MPLLexer.IDENTIFIER);
     }
     
     @Test

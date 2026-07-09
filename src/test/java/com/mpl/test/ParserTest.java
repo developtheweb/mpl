@@ -53,12 +53,15 @@ public class ParserTest extends MPLTestBase {
         assertParses("(x ← y);");
     }
     
+    // Function calls are f(a, b) only — juxtaposition (f x) was removed.
     @Test
-    public void testFunctionApplication() throws IOException {
-        assertParses("f x;");
-        assertParses("g a b c;");
-        assertParses("sin π;");
-        assertParses("(f x) y;");
+    public void testFunctionCalls() throws IOException {
+        assertParses("f(x);");
+        assertParses("g(a, b, c);");
+        assertParses("sin(π);");
+        assertParses("f(x)(y);");
+        assertParses("f();");                  // nullary call
+        assertParses("mergeResults();");
     }
     
     @Test
@@ -66,14 +69,15 @@ public class ParserTest extends MPLTestBase {
         assertParses("λx: x + 1;");
         assertParses("λx∈ℕ: x × 2;");
         assertParses("λa: λb: a + b;");
-        assertParses("(λx: x × x) 5;");
+        assertParses("λa, b: a + b;");         // multi-parameter pattern
+        assertParses("(λx: x × x)(5);");       // was (λx: x × x) 5 — juxtaposition removed
     }
     
     @Test
     public void testForall() throws IOException {
-        assertParses("∀x∈S: P x;");
+        assertParses("∀x∈S: P(x);");           // was P x — juxtaposition removed
         assertParses("∀n∈ℕ: n ≥ 0;");
-        assertParses("∀x∈A: ∀y∈B: f x y;");
+        assertParses("∀x∈A: ∀y∈B: f(x, y);");  // was f x y — juxtaposition removed
     }
     
     @Test
@@ -81,19 +85,31 @@ public class ParserTest extends MPLTestBase {
         assertParses("f ≜ λx: x + 1;");
         assertParses("pi ≜ 3.14159;");
         assertParses("id ≜ λx: x;");
+        assertParses("π ≜ 3.14159;");          // greek letter on the left
     }
     
     @Test
     public void testBlocks() throws IOException {
         assertParses("{ x ← 1; y ← 2; x + y }");
-        assertParses("{ a ← b; { c ← d; } e }");
+        // Was "{ a ← b; { c ← d; } e }": the inner block juxtaposed with e
+        // relied on juxtaposition application, which was removed.
+        assertParses("{ a ← b; { c ← d; }; e }");
         assertParses("{ }");
+        assertParses("{ x }");                 // singleton braces are a block
     }
     
     @Test
     public void testConditionals() throws IOException {
         assertParses("x > 0 ⟹ x | -x;");
-        assertParses("(n = 0 ⟹ 1) | (n × fact (n-1));");
+        assertParses("(n = 0 ⟹ 1) | (n × fact(n-1));");
+        assertParses("(n≤1 ⟹ 1) | (n×factorial(n-1));");
+    }
+
+    @Test
+    public void testUnaryMinus() throws IOException {
+        assertParses("-x;");
+        assertParses("a - -b;");
+        assertParses("f(-1);");
     }
     
     @Test
@@ -129,26 +145,52 @@ public class ParserTest extends MPLTestBase {
         assertParses("↯\"error\";");
         assertParses("✎\"log message\";");
         assertParses("⏲ 100;");
-        assertParses("x ↴ {↯e ⇒ handle e};");
+        // Canonical handler clause: ↯pattern ⟹ expr (was ↯e ⇒ handle e)
+        assertParses("x ↴ {↯e ⟹ handle(e)};");
+        assertParses("x ↴ {↯\"Invalid user\" ⟹ ⊥};");
+        // Multiple clauses are semicolon-separated
+        assertParses("x ↴ {↯\"overflow\" ⟹ 0; ↯e ⟹ ↯e};");
+    }
+
+    @Test
+    public void testResources() throws IOException {
+        assertParses("conn ← database ⊕;");
+        assertParses("conn ⊖;");
+        assertParses("socket ← bind(port) ⊕;");
+    }
+
+    @Test
+    public void testChannels() throws IOException {
+        assertParses("data ← ↽_socket request;");
+        assertParses("⇀_socket response;");
+    }
+
+    @Test
+    public void testModuleAccess() throws IOException {
+        assertParses("Mathematics‧sin(angle);");
+        assertParses("A‧B‧f(x);");
     }
     
     @Test
     public void testParallel() throws IOException {
         assertParses("a ‖ b;");
         assertParses("task1 ‖ task2 ‖ task3;");
-        assertParses("(f x) ‖ (g y);");
+        assertParses("f(x) ‖ g(y);");          // was (f x) ‖ (g y) — juxtaposition removed
     }
     
     @Test
     public void testAtomic() throws IOException {
         assertParses("⌈x ← x + 1⌉;");
-        assertParses("⌈critical section⌉_lock;");
+        // Was "⌈critical section⌉_lock" — juxtaposition removed
+        assertParses("⌈criticalSection()⌉_lock;");
+        assertParses("⌈a ← 1; b ← 2⌉_db_lock;");
     }
     
     @Test
     public void testRAII() throws IOException {
-        assertParses("〔 r ← resource ⊕; use r 〕;");
-        assertParses("〔 f ← open \"file\"; read f 〕;");
+        // Was "use r" / "open \"file\"" / "read f" — juxtaposition removed
+        assertParses("〔 r ← resource ⊕; use(r) 〕;");
+        assertParses("〔 f ← open(\"file\"); read(f) 〕;");
     }
     
     @Test
@@ -167,6 +209,7 @@ public class ParserTest extends MPLTestBase {
     public void testPaths() throws IOException {
         assertParses("🖫\"file.txt\";");
         assertParses("\\path\"directory/file\";");
+        assertParses("readFile(🖫path);");      // identifier form
     }
     
     @Test
@@ -174,8 +217,8 @@ public class ParserTest extends MPLTestBase {
         // Factorial
         assertParses("factorial ≜ λn∈ℕ: (n≤1 ⟹ 1) | (n×factorial(n-1));");
         
-        // File processing
-        assertParses("processFile ≜ λpath: { data ← readFile(🖫path); result ← transform(data); writeFile(result, 🖫\"output.txt\"); ⟨\"success\"|\"failed\"⟩ } ↴ {↯e ⇒ ⟨⊥|e⟩};");
+        // File processing (canonical handler clause is ↯pattern ⟹ expr)
+        assertParses("processFile ≜ λpath: { data ← readFile(🖫path); result ← transform(data); writeFile(result, 🖫\"output.txt\"); ⟨\"success\"|\"failed\"⟩ } ↴ {↯e ⟹ ⟨⊥|e⟩};");
         
         // Network server
         assertParses("server ≜ λport: 〔 socket ← bind(port) ⊕; ∀request∈acceptLoop(socket): ( data ← ↽_socket request; response ← processRequest(data); ⇀_socket response ) ‖ handleNext() 〕;");
@@ -197,6 +240,13 @@ public class ParserTest extends MPLTestBase {
         // Invalid lambda syntax
         assertDoesNotParse("λ: x;");
         assertDoesNotParse("λx y: x + y;");
+
+        // Juxtaposition application was removed — calls need parentheses
+        assertDoesNotParse("f x;");
+        assertDoesNotParse("g a b c;");
+
+        // The C-style ternary is not MPL — use (cond ⟹ a) | b
+        assertDoesNotParse("cond ? a : b;");
     }
     
     @Test
