@@ -1,1 +1,1 @@
-{"status": "unratified", "source": "coverage", "decision": "", "notes": "braces do NOT create a scope: bindings made inside leak out"}
+{"status": "ratified", "source": "coverage", "decision": "Ratified 2026-07-09, ruling 15", "notes": "braces do NOT create a scope: bindings made inside leak out"}

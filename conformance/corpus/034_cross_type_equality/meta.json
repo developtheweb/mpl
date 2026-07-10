@@ -1,1 +1,1 @@
-{"status": "unratified", "source": "coverage", "decision": "", "notes": "equality is structural per type and false across types; ⊥ equals ⊥"}
+{"status": "ratified", "source": "coverage", "decision": "Ratified 2026-07-09, ruling 7", "notes": "equality is structural per type and false across types; ⊥ equals ⊥"}

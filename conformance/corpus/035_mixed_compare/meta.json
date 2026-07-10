@@ -1,1 +1,1 @@
-{"status": "unratified", "source": "coverage", "decision": "", "notes": "ordering across types follows host coercion — observed, flagged as a judgment call"}
+{"status": "ratified", "source": "coverage", "decision": "Ratified 2026-07-09, ruling 8", "notes": "ordering across types follows host coercion — observed, flagged as a judgment call"}

@@ -1,1 +1,1 @@
-{"status": "unratified", "source": "example", "decision": "", "notes": "seeded from examples/01_hello_world.mpl"}
+{"status": "ratified", "source": "example", "decision": "Ratified 2026-07-09 (Stage 3 batch — behavior blessed as observed; no single ruling)", "notes": "seeded from examples/01_hello_world.mpl"}

@@ -1,1 +1,1 @@
-{"status": "unratified", "source": "coverage", "decision": "", "notes": "unterminated block comment"}
+{"status": "ratified", "source": "coverage", "decision": "Ratified 2026-07-09 (Stage 3 batch — behavior blessed as observed; no single ruling)", "notes": "unterminated block comment: '{-' without a matching '-}' is not a comment token, so the brace lexes bare and the program fails to parse (matches the grammar's MULTILINE_COMMENT)"}

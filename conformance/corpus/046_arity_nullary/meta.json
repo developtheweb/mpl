@@ -1,1 +1,1 @@
-{"status": "unratified", "source": "coverage", "decision": "", "notes": "nullary call syntax parses; arity is checked at runtime"}
+{"status": "ratified", "source": "coverage", "decision": "Ratified 2026-07-09, ruling 18", "notes": "nullary call syntax parses; arity is checked at runtime"}

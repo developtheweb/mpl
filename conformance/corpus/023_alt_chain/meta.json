@@ -1,1 +1,1 @@
-{"status": "unratified", "source": "coverage", "decision": "", "notes": "fall-through chains take the first firing arm"}
+{"status": "ratified", "source": "coverage", "decision": "Ratified 2026-07-09, ruling 3", "notes": "fall-through chains take the first firing arm"}

@@ -1,1 +1,1 @@
-{"status": "unratified", "source": "coverage", "decision": "", "notes": "+ concatenates when either operand is a string, rendering the other via show"}
+{"status": "ratified", "source": "coverage", "decision": "Ratified 2026-07-09, ruling 5", "notes": "+ concatenates when either operand is a string, rendering the other via show"}

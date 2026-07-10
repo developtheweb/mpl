@@ -1,1 +1,1 @@
-{"status": "unratified", "source": "coverage", "decision": "", "notes": "the ∀ variable shadows per iteration and the outer binding survives"}
+{"status": "ratified", "source": "coverage", "decision": "Ratified 2026-07-09, ruling 15", "notes": "the ∀ variable shadows per iteration and the outer binding survives"}

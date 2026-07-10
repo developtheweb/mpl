@@ -1,1 +1,1 @@
-{"status": "unratified", "source": "coverage", "decision": "", "notes": "≜ and ← both rebind freely; ← works without a prior ≜"}
+{"status": "ratified", "source": "coverage", "decision": "Ratified 2026-07-09, ruling 16", "notes": "≜ and ← both rebind freely; ← works without a prior ≜"}

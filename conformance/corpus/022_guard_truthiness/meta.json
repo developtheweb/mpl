@@ -1,1 +1,1 @@
-{"status": "unratified", "source": "coverage", "decision": "", "notes": "guard conditions: true or non-zero number fire; strings/lists never do"}
+{"status": "ratified", "source": "coverage", "decision": "Ratified 2026-07-09, ruling 13", "notes": "guard conditions: true or non-zero number fire; strings/lists never do"}

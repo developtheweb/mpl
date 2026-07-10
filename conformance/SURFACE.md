@@ -1,9 +1,12 @@
 # SURFACE — what `js/mpl.js` actually implements
 
-Audited from the source of `js/mpl.js` (Stage 2, C3) and pinned by the
-corpus. This file describes the implemented surface — exactly, no more.
-Nothing here is ratified; where behavior looks accidental it is flagged in
-`conformance/JUDGMENT_CALLS.md`, but it is recorded as observed.
+Audited from the source of `js/mpl.js` at Stage 2 (C3, head `ea66a2a`) and
+pinned by the corpus of that stage. **Historical record**: Stage 3 ratified
+the 26 judgment calls (2026-07-09) and changed the surface where rulings
+overrode it — rationals, boolean conditions, binding discipline, depth
+limit, composition, and parser alignment. Where this file and
+`JUDGMENT_CALLS.md` disagree, the rulings govern; the ratified corpus is
+the executable truth.
 
 ## Lexer
 

@@ -1,1 +1,1 @@
-{"status": "unratified", "source": "coverage", "decision": "", "notes": "IEEE double arithmetic, including the 0.1+0.2 representation artifact"}
+{"status": "ratified", "source": "coverage", "decision": "Ratified 2026-07-09, ruling 4", "notes": "IEEE double arithmetic, including the 0.1+0.2 representation artifact"}

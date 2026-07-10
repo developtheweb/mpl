@@ -1,1 +1,1 @@
-{"status": "unratified", "source": "coverage", "decision": "", "notes": "inside a λ, ← mutates the captured outer binding; ≜ creates a local one"}
+{"status": "ratified", "source": "coverage", "decision": "Ratified 2026-07-09, ruling 9 and 16", "notes": "inside a λ, ← mutates the captured outer binding; ≜ creates a local one"}

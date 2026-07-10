@@ -1,1 +1,1 @@
-{"status": "unratified", "source": "coverage", "decision": "", "notes": "∧ skips its right side on false; ∨ skips it on true (observable via side effect)"}
+{"status": "ratified", "source": "coverage", "decision": "Ratified 2026-07-09, ruling 14", "notes": "∧ skips its right side on false; ∨ skips it on true (observable via side effect)"}

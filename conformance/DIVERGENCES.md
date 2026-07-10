@@ -19,7 +19,7 @@ where a different source is noted.
 - JS interpreter: accepts (prints `dropqme` — an unknown string escape
   drops the backslash silently)
 - ANTLR grammar: rejects (token recognition error at: '"drop\q')
-- RULING: pending (see JUDGMENT_CALLS.md)
+- RESOLVED by ruling 12 at ad01bbd
 
 ## Divergence (fuzz seed 20260709, index 49)
 
@@ -29,7 +29,7 @@ where a different source is noted.
 
 - JS interpreter: rejects (err_unexpected at 1:1)
 - ANTLR grammar: accepts (parses)
-- RULING: pending (see JUDGMENT_CALLS.md)
+- RESOLVED by ruling 20 at ad01bbd
 
 ## Divergence (fuzz seed 20260709, index 11)
 
@@ -39,7 +39,7 @@ where a different source is noted.
 
 - JS interpreter: accepts (runs)
 - ANTLR grammar: rejects (1:0: token recognition error at: '"a\z')
-- RULING: pending (see JUDGMENT_CALLS.md)
+- RESOLVED by ruling 12 at ad01bbd
 
 ## Divergence (fuzz seed 20260709, index 86)
 
@@ -49,7 +49,7 @@ where a different source is noted.
 
 - JS interpreter: rejects (err_expect at 1:5)
 - ANTLR grammar: accepts (parses)
-- RULING: pending (see JUDGMENT_CALLS.md)
+- RESOLVED by ruling 21 at ad01bbd
 
 ## Divergence (fuzz seed 20260709, index 247)
 
@@ -59,7 +59,7 @@ where a different source is noted.
 
 - JS interpreter: rejects (err_expect at 1:4)
 - ANTLR grammar: accepts (parses)
-- RULING: pending (see JUDGMENT_CALLS.md)
+- RESOLVED by ruling 21 at ad01bbd
 
 ## Divergence (fuzz seed 20260709, index 119)
 
@@ -69,7 +69,7 @@ where a different source is noted.
 
 - JS interpreter: rejects (err_expect at 1:3)
 - ANTLR grammar: accepts (parses)
-- RULING: pending (see JUDGMENT_CALLS.md)
+- RESOLVED by ruling 21 at ad01bbd
 
 ## Divergence (fuzz seed 20260709, index 9)
 
@@ -79,7 +79,7 @@ where a different source is noted.
 
 - JS interpreter: rejects (err_expect at 1:3)
 - ANTLR grammar: accepts (parses)
-- RULING: pending (see JUDGMENT_CALLS.md)
+- RESOLVED by ruling 22 at cd59791
 
 ## Divergence (fuzz seed 20260709, index 144)
 
@@ -89,7 +89,7 @@ where a different source is noted.
 
 - JS interpreter: rejects (err_expect at 1:5)
 - ANTLR grammar: accepts (parses)
-- RULING: pending (see JUDGMENT_CALLS.md)
+- RESOLVED by ruling 23 at ad01bbd
 
 ## Divergence (fuzz seed 20260709, index 456)
 
@@ -99,7 +99,7 @@ where a different source is noted.
 
 - JS interpreter: rejects (err_expect at 1:8)
 - ANTLR grammar: accepts (parses)
-- RULING: pending (see JUDGMENT_CALLS.md)
+- RESOLVED by ruling 23 at ad01bbd
 
 ## Divergence (fuzz seed 20260709, index 182)
 
@@ -109,7 +109,7 @@ where a different source is noted.
 
 - JS interpreter: rejects (err_expect at 1:8)
 - ANTLR grammar: accepts (parses)
-- RULING: pending (see JUDGMENT_CALLS.md)
+- RESOLVED by ruling 23 at ad01bbd
 
 ## Divergence (fuzz seed 20260709, index 284)
 
@@ -119,7 +119,7 @@ where a different source is noted.
 
 - JS interpreter: rejects (err_expect at 1:6)
 - ANTLR grammar: accepts (parses)
-- RULING: pending (see JUDGMENT_CALLS.md)
+- RESOLVED by ruling 23 at ad01bbd
 
 ## Divergence (fuzz seed 20260709, index 276)
 
@@ -129,7 +129,7 @@ where a different source is noted.
 
 - JS interpreter: rejects (err_expect at 1:4)
 - ANTLR grammar: accepts (parses)
-- RULING: pending (see JUDGMENT_CALLS.md)
+- RESOLVED by ruling 23 at ad01bbd
 
 ## Divergence (fuzz seed 20260709, index 427)
 
@@ -139,7 +139,7 @@ where a different source is noted.
 
 - JS interpreter: rejects (err_expect at 1:4)
 - ANTLR grammar: accepts (parses)
-- RULING: pending (see JUDGMENT_CALLS.md)
+- RESOLVED by ruling 24 at ad01bbd
 
 ## Divergence (fuzz seed 20260709, index 101)
 
@@ -149,7 +149,7 @@ where a different source is noted.
 
 - JS interpreter: rejects (err_expect at 1:4)
 - ANTLR grammar: accepts (parses)
-- RULING: pending (see JUDGMENT_CALLS.md)
+- RESOLVED by ruling 23 at ad01bbd
 
 ## Divergence (fuzz seed 20260709, index 425)
 
@@ -159,7 +159,7 @@ where a different source is noted.
 
 - JS interpreter: rejects (err_expect at 1:4)
 - ANTLR grammar: accepts (parses)
-- RULING: pending (see JUDGMENT_CALLS.md)
+- RESOLVED by ruling 24 at ad01bbd
 
 ## Divergence (fuzz seed 20260709, index 194)
 
@@ -169,7 +169,7 @@ where a different source is noted.
 
 - JS interpreter: rejects (err_expect at 1:4)
 - ANTLR grammar: accepts (parses)
-- RULING: pending (see JUDGMENT_CALLS.md)
+- RESOLVED by ruling 23 at ad01bbd
 
 ## Divergence (fuzz seed 20260709, index 212)
 
@@ -179,7 +179,7 @@ where a different source is noted.
 
 - JS interpreter: rejects (err_expect at 1:4)
 - ANTLR grammar: accepts (parses)
-- RULING: pending (see JUDGMENT_CALLS.md)
+- RESOLVED by ruling 24 at ad01bbd
 
 ## Divergence (fuzz seed 20260709, index 25)
 
@@ -189,7 +189,7 @@ where a different source is noted.
 
 - JS interpreter: rejects (err_expect at 1:4)
 - ANTLR grammar: accepts (parses)
-- RULING: pending (see JUDGMENT_CALLS.md)
+- RESOLVED by ruling 24 at ad01bbd
 
 ## Divergence (fuzz seed 20260709, index 347)
 
@@ -199,7 +199,7 @@ where a different source is noted.
 
 - JS interpreter: rejects (err_expect at 1:5)
 - ANTLR grammar: accepts (parses)
-- RULING: pending (see JUDGMENT_CALLS.md)
+- RESOLVED by ruling 21 at ad01bbd
 
 ## Divergence (fuzz seed 20260709, index 52)
 
@@ -209,7 +209,7 @@ where a different source is noted.
 
 - JS interpreter: rejects (err_expect at 1:4)
 - ANTLR grammar: accepts (parses)
-- RULING: pending (see JUDGMENT_CALLS.md)
+- RESOLVED by ruling 26 at c447eb7
 
 ## Divergence (fuzz seed 20260709, index 76)
 
@@ -219,7 +219,7 @@ where a different source is noted.
 
 - JS interpreter: accepts (runs)
 - ANTLR grammar: rejects (1:4: mismatched input ':' expecting {<EOF>, ';', PARALLEL, LEFTARROW, IMPLIES, OR, AND, '=', NEQ, '<', '>', LEQ, GEQ, APPROX, SIM, '+', '-', TIMES, DIV, AST, COMPOSE, DEFINITION, HANDLE, ALLOC, RELEASE, '(', '|', MIDDOT})
-- RULING: pending (see JUDGMENT_CALLS.md)
+- RESOLVED by ruling 25 at ad01bbd
 
 ## Divergence (fuzz seed 20260709, index 13)
 
@@ -229,7 +229,7 @@ where a different source is noted.
 
 - JS interpreter: accepts (runs)
 - ANTLR grammar: rejects (1:4: mismatched input ':' expecting {<EOF>, ';', PARALLEL, LEFTARROW, IMPLIES, OR, AND, '=', NEQ, '<', '>', LEQ, GEQ, APPROX, SIM, '+', '-', TIMES, DIV, AST, COMPOSE, DEFINITION, HANDLE, ALLOC, RELEASE, '(', '|', MIDDOT})
-- RULING: pending (see JUDGMENT_CALLS.md)
+- RESOLVED by ruling 25 at ad01bbd
 
 ## Divergence (fuzz seed 20260709, index 29)
 
@@ -239,4 +239,18 @@ where a different source is noted.
 
 - JS interpreter: accepts (runs)
 - ANTLR grammar: rejects (1:4: mismatched input ':' expecting {<EOF>, ';', PARALLEL, LEFTARROW, IMPLIES, OR, AND, '=', NEQ, '<', '>', LEQ, GEQ, APPROX, SIM, '+', '-', TIMES, DIV, AST, COMPOSE, DEFINITION, HANDLE, ALLOC, RELEASE, '(', '|', MIDDOT})
-- RULING: pending (see JUDGMENT_CALLS.md)
+- RESOLVED by ruling 25 at ad01bbd
+
+## Divergence (fuzz seed 20260710, index 178 — found during Stage 3 A7)
+
+```
+({-42})
+```
+
+- JS interpreter: rejected (err_comment — the lexer committed '{-' to a
+  comment even without a terminator)
+- ANTLR grammar: accepts (MULTILINE_COMMENT requires its '-}'; '{' lexes
+  as a brace, so this is a block containing -42)
+- RESOLVED by grammar alignment (decision: the grammar is the syntax
+  truth) at f5e8407 — no ruling needed; found by the fresh fuzz seed and
+  fixed before commit
