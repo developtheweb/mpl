@@ -58,7 +58,8 @@ function lor(){let l=land();while(at('or')){const tk=toks[p++];l={k:'or',l,r:lan
 function land(){let l=compare();while(at('and')){const tk=toks[p++];l={k:'and',l,r:compare(),line:tk.line,col:tk.col}}return l}
 function compare(){const l=add();const ops={eq:1,neq:1,lt:1,gt:1,leq:1,geq:1};if(ops[peek().t]){const tk=toks[p++];return{k:'cmp',o:tk.t,l,r:add(),line:tk.line,col:tk.col}}return l}
 function add(){let l=mul();while(at('plus')||at('minus')){const o=toks[p++].t;l={k:'bin',o,l,r:mul(),line:toks[p-1].line,col:toks[p-1].col}}return l}
-function mul(){let l=unary();while(at('mul')||at('divi')){const o=toks[p++].t;l={k:'bin',o,l,r:unary(),line:toks[p-1].line,col:toks[p-1].col}}return l}
+function mul(){let l=compose();while(at('mul')||at('divi')){const o=toks[p++].t;l={k:'bin',o,l,r:compose(),line:toks[p-1].line,col:toks[p-1].col}}return l}
+function compose(){let l=unary();while(at('compose')){const tk=toks[p++];l={k:'comp',l,r:unary(),line:tk.line,col:tk.col}}return l}
 function unary(){if(at('trace')){const tk=toks[p++];return{k:'trace',e:unary(),line:tk.line,col:tk.col}}if(at('minus')){const tk=toks[p++];return{k:'neg',e:unary(),line:tk.line,col:tk.col}}return postfix()}
 function postfix(){let e=atom();for(;;){if(at('lp')){const tk=toks[p++];const args=[];if(!at('rp')){args.push(expr());while(at('comma')){p++;args.push(expr())}}eat('rp');e={k:'call',f:e,args,line:tk.line,col:tk.col};continue}break}return e}
 function pattern(){const names=[eat('id').v];while(at('comma')){p++;names.push(eat('id').v)}return names}
@@ -101,11 +102,7 @@ function ev(root,sc0){
 const K=[{n:root,sc:sc0,st:0}];let ret;
 const push=(n,sc)=>{K.push({n,sc,st:0});if(++steps>500000){const e=new Error('err_steps');e.key='err_steps';e.line=n.line||1;e.col=n.col||1;throw e}};
 const bool=(v,n)=>{if(typeof v!=='boolean')rte('err_bool',n);return v};
-const apply=f=>{const fn=f.fn,n=f.n;
- if(fn.ps.length!==f.args.length)rte('err_arity',n);
- if(++depth>10000)rte('err_depth',n);
- const inner={vars:new Map(),parent:fn.sc};fn.ps.forEach((pn,ix)=>inner.vars.set(pn,f.args[ix]));
- f.st=3;push(fn.body,inner)};
+const apply=f=>{const n=f.n;K.pop();K.push({n:{k:'papply',fn:f.fn,args:f.args,line:n.line,col:n.col},sc:null,st:0})};
 while(K.length){const f=K[K.length-1],n=f.n,sc=f.sc;
 switch(n.k){
 case 'lit':ret=n.v;K.pop();break;
@@ -150,15 +147,31 @@ case 'call':{if(f.st===0){f.st=1;push(n.f,sc)}
   if(n.args.length){f.st=2;push(n.args[0],sc)}else apply(f)}
  else if(f.st===2){f.args.push(strip(ret));
   if(f.args.length<n.args.length)push(n.args[f.args.length],sc);else apply(f)}
+ break}
+case 'papply':{const fn=n.fn;
+ if(f.st===0){if(!fn||!fn.closure)rte('err_notfn',n);
+  if(fn.comp){f.st=1;push({k:'papply',fn:fn.comp[1],args:n.args,line:n.line,col:n.col},null)}
+  else{if(fn.ps.length!==n.args.length)rte('err_arity',n);
+   if(++depth>10000)rte('err_depth',n);
+   const inner={vars:new Map(),parent:fn.sc};fn.ps.forEach((pn,ix)=>inner.vars.set(pn,n.args[ix]));
+   f.st=3;push(fn.body,inner)}}
+ else if(f.st===1){f.st=2;push({k:'papply',fn:fn.comp[0],args:[strip(ret)],line:n.line,col:n.col},null)}
+ else if(f.st===2){K.pop()}
  else{depth--;ret=strip(ret);K.pop()}break}
+case 'comp':{if(f.st===0){f.st=1;push(n.l,sc)}
+ else if(f.st===1){f.a=strip(ret);f.st=2;push(n.r,sc)}
+ else{const a=f.a,b=strip(ret);if(!a||!a.closure||!b||!b.closure)rte('err_notfn',n);ret={closure:true,comp:[a,b]};K.pop()}break}
 case 'forall':{if(f.st===0){f.st=1;push(n.it,sc)}
- else if(f.st===1){const it=strip(ret);if(!Array.isArray(it))rte('err_iter',n);f.it=it;f.i=0;f.st=2;f.last=BOT;
+ else if(f.st===1){const it=strip(ret);if(!Array.isArray(it))rte('err_iter',n);f.it=it;f.i=0;f.st=2;
   if(it.length)push(n.body,{vars:new Map([[n.v,it[f.i++]]]),parent:sc});else{ret=BOT;K.pop()}}
- else{f.last=strip(ret);
+ else{/* ruling 2: ∀ is an iterator — its value is ⊥ always */
   if(f.i<f.it.length)push(n.body,{vars:new Map([[n.v,f.it[f.i++]]]),parent:sc});
-  else{ret=f.last;K.pop()}}break}
+  else{ret=BOT;K.pop()}}break}
 case 'list':{if(f.st===0){f.es=[];f.st=1;if(!n.es.length){ret=[];K.pop();break}push(n.es[0],sc)}
  else{f.es.push(strip(ret));if(f.es.length<n.es.length)push(n.es[f.es.length],sc);else{ret=f.es;K.pop()}}break}
+/* rulings 23/24: set and record literals parse; their semantics are M1 —
+   evaluation raises err_notyet */
+case 'setlit':case 'record':rte('err_notyet',n);
 default:rte('err_notyet',n)}}
 return ret}
 const out=strip(ev(ast,global));return show(out)}
