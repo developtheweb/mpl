@@ -13,19 +13,29 @@ const R={add:(a,b)=>rat(a.n*b.d+b.n*a.d,a.d*b.d),sub:(a,b)=>rat(a.n*b.d-b.n*a.d,
 const cmpStr=(a,b)=>{const A=[...a],B=[...b],m=Math.min(A.length,B.length);
  for(let i=0;i<m;i++){const x=A[i].codePointAt(0),y=B[i].codePointAt(0);if(x!==y)return x<y?-1:1}
  return A.length===B.length?0:A.length<B.length?-1:1};
-const ESCAPES={lambda:'λ',forall:'∀',in:'∈',coloneq:'≜',leftarrow:'←',implies:'⟹',and:'∧',or:'∨',neq:'≠',leq:'≤',geq:'≥',times:'×',div:'÷',trace:'✎',bot:'⊥',parallel:'‖',circ:'∘',ast:'∗'};
+const ESCAPES={lambda:'λ',forall:'∀',in:'∈',coloneq:'≜',leftarrow:'←',implies:'⟹',and:'∧',or:'∨',neq:'≠',leq:'≤',geq:'≥',times:'×',div:'÷',trace:'✎',bot:'⊥',parallel:'‖',circ:'∘',ast:'∗',
+ alpha:'α',beta:'β',gamma:'γ',delta:'δ',epsilon:'ε',zeta:'ζ',eta:'η',theta:'θ',iota:'ι',kappa:'κ',mu:'μ',nu:'ν',xi:'ξ',omicron:'ο',pi:'π',rho:'ρ',sigma:'σ',tau:'τ',upsilon:'υ',phi:'φ',chi:'χ',psi:'ψ',omega:'ω',
+ nat:'ℕ',int:'ℤ',rat:'ℚ',real:'ℝ',complex:'ℂ',bool:'𝔹'};
+/* Ruling 26: λ is reserved; every other Greek letter is an identifier —
+   one letter per token, matching the grammar's per-letter tokens. */
+const GREEK='αβγδεζηθικμνξοπρστυφχψω';
 function lex(src){const toks=[];let i=0,line=1,col=1;const push=(t,v,l,c)=>toks.push({t,v,line:l,col:c});const err=(key,l,c)=>{const e=new Error(key);e.key=key;e.line=l;e.col=c;throw e};
 while(i<src.length){const ch=src[i],l=line,c=col;const adv=n=>{for(let k=0;k<n;k++){if(src[i]==='\n'){line++;col=1}else col++;i++}};
 if(ch==='\n'||ch===' '||ch==='\t'||ch==='\r'){adv(1);continue}
 if(ch==='-'&&src[i+1]==='-'){while(i<src.length&&src[i]!=='\n')adv(1);continue}
-if(ch==='{'&&src[i+1]==='-'){let d=0;while(i<src.length){if(src[i]==='{'&&src[i+1]==='-'){d++;adv(2)}else if(src[i]==='-'&&src[i+1]==='}'){d--;adv(2);if(!d)break}else adv(1)}if(d)err('err_comment',l,c);continue}
-if(ch==='"'){adv(1);let s='';while(i<src.length&&src[i]!=='"'){if(src[i]==='\\'){adv(1);const e=src[i];s+=e==='n'?'\n':e==='t'?'\t':e;adv(1)}else{s+=src[i];adv(1)}}if(src[i]!=='"')err('err_string',l,c);adv(1);push('str',s,l,c);continue}
-if(ch==='\\'){adv(1);let w='';while(i<src.length&&/[a-zA-Z]/.test(src[i])){w+=src[i];adv(1)}const g=ESCAPES[w];if(!g)err('err_escape',l,c);push(...tokFor(g,l,c));continue}
+if(ch==='{'&&src[i+1]==='-'){/* '{-' opens a comment only if a matching
+   nested '-}' exists — the grammar's MULTILINE_COMMENT token requires its
+   terminator; otherwise '{' is a brace (so ({-42}) is a block of -42). */
+let d=0,j=i,ok=false;while(j<src.length){if(src[j]==='{'&&src[j+1]==='-'){d++;j+=2}else if(src[j]==='-'&&src[j+1]==='}'){d--;j+=2;if(!d){ok=true;break}}else j++}
+if(ok){adv(j-i);continue}}
+if(ch==='"'){adv(1);let s='';while(i<src.length&&src[i]!=='"'){if(src[i]==='\\'){const el=line,ec=col;adv(1);const e=src[i];if(e==='n')s+='\n';else if(e==='t')s+='\t';else if(e==='"')s+='"';else if(e==='\\')s+='\\';else err('err_escape',el,ec);adv(1)}else{s+=src[i];adv(1)}}if(src[i]!=='"')err('err_string',l,c);adv(1);push('str',s,l,c);continue}
+if(ch==='\\'){adv(1);let w='';while(i<src.length&&/[a-zA-Z]/.test(src[i])){w+=src[i];adv(1)}const g=ESCAPES[w];if(!g)err('err_escape',l,c);if(GREEK.includes(g)||'ℕℤℚℝℂ𝔹'.includes(g))push('id',g,l,c);else push(...tokFor(g,l,c));continue}
 if(/[0-9]/.test(ch)){let n='';while(i<src.length&&/[0-9]/.test(src[i])){n+=src[i];adv(1)}let f='';if(src[i]==='.'&&/[0-9]/.test(src[i+1])){adv(1);while(i<src.length&&/[0-9]/.test(src[i])){f+=src[i];adv(1)}}push('num',rat(BigInt(n+f),10n**BigInt(f.length)),l,c);continue}
 if(/[a-zA-Z]/.test(ch)){let w='';while(i<src.length&&/[a-zA-Z0-9_]/.test(src[i])){w+=src[i];adv(1)}if(w==='true')push('bool',true,l,c);else if(w==='false')push('bool',false,l,c);else push('id',w,l,c);continue}
 /* Type symbols lex as identifiers so ∈-constraints (λn∈ℕ:) parse; the
    parser discards the constraint unevaluated — ruling 17. 𝔹 is
    supplementary-plane (2 units). */
+if(GREEK.includes(ch)){adv(1);push('id',ch,l,c);continue}
 const glyph=String.fromCodePoint(src.codePointAt(i));
 if('ℕℤℚℝℂ𝔹'.includes(glyph)){adv(glyph.length);push('id',glyph,l,c);continue}
 const single='✎λ∀∈≜←⟹∧∨≠≤≥×÷∗∘‖⊥+-/=<>|;:,()[]{}';
@@ -36,7 +46,7 @@ function tokFor(g,l,c){const map={'✎':'trace','λ':'lambda','∀':'forall','�
 function parse(toks){let p=0;const peek=()=>toks[p],at=t=>toks[p].t===t;
 const err=(key,tok)=>{const e=new Error(key);e.key=key;e.line=tok.line;e.col=tok.col;throw e};
 const eat=t=>{if(!at(t))err('err_expect',peek());return toks[p++]};
-function program(){const s=seq();eat('eof');return s}
+function program(){const s=at('eof')?{k:'seq',es:[]}:seq();eat('eof');return s}
 function seq(){const es=[expr()];while(at('semi')){p++;if(at('eof')||at('rc')||at('rp')||at('rb'))break;es.push(expr())}return es.length===1?es[0]:{k:'seq',es}}
 function expr(){return parallel()}
 function parallel(){let l=def();while(at('par')){p++;l={k:'seq',es:[l,def()]}}return l}
@@ -51,16 +61,20 @@ function add(){let l=mul();while(at('plus')||at('minus')){const o=toks[p++].t;l=
 function mul(){let l=unary();while(at('mul')||at('divi')){const o=toks[p++].t;l={k:'bin',o,l,r:unary(),line:toks[p-1].line,col:toks[p-1].col}}return l}
 function unary(){if(at('trace')){const tk=toks[p++];return{k:'trace',e:unary(),line:tk.line,col:tk.col}}if(at('minus')){const tk=toks[p++];return{k:'neg',e:unary(),line:tk.line,col:tk.col}}return postfix()}
 function postfix(){let e=atom();for(;;){if(at('lp')){const tk=toks[p++];const args=[];if(!at('rp')){args.push(expr());while(at('comma')){p++;args.push(expr())}}eat('rp');e={k:'call',f:e,args,line:tk.line,col:tk.col};continue}break}return e}
-function pattern(){const names=[];if(at('lp')){p++;names.push(eat('id').v);while(at('comma')){p++;names.push(eat('id').v)}eat('rp')}else{names.push(eat('id').v);while(at('comma')){p++;names.push(eat('id').v)}}return names}
+function pattern(){const names=[eat('id').v];while(at('comma')){p++;names.push(eat('id').v)}return names}
 function atom(){const tk=peek();
 if(at('num')||at('str')||at('bool')){p++;return{k:'lit',v:tk.v}}
 if(at('bot')){p++;return{k:'lit',v:BOT}}
 if(at('id')){p++;return{k:'id',v:tk.v,line:tk.line,col:tk.col}}
-if(at('lambda')){p++;const ps=pattern();if(at('in')){p++;cond()}eat('colon');return{k:'lam',ps,body:expr()}}
+if(at('lambda')){p++;let ps=[];if(!at('colon')){ps=pattern();if(at('in')){p++;cond()}}eat('colon');return{k:'lam',ps,body:expr()}}
 if(at('forall')){p++;const v=eat('id').v;eat('in');const it=cond();eat('colon');return{k:'forall',v,it,body:expr(),line:tk.line,col:tk.col}}
 if(at('lb')){p++;const es=[];if(!at('rb')){es.push(expr());while(at('comma')){p++;es.push(expr())}}eat('rb');return{k:'list',es}}
-if(at('lp')){p++;const e=expr();eat('rp');return e}
-if(at('lc')){p++;if(at('rc')){p++;return{k:'lit',v:BOT}}const s=seq();eat('rc');return s}
+if(at('lp')){p++;const e=seq();eat('rp');return e}
+if(at('lc')){p++;if(at('rc')){p++;return{k:'lit',v:BOT}}
+if(at('id')&&toks[p+1].t==='colon'){const fields=[];for(;;){const key=eat('id').v;eat('colon');fields.push([key,expr()]);if(at('comma')){p++;continue}break}eat('rc');return{k:'record',fields,line:tk.line,col:tk.col}}
+const first=expr();
+if(at('comma')){const es=[first];while(at('comma')){p++;es.push(expr())}eat('rc');return{k:'setlit',es,line:tk.line,col:tk.col}}
+const es=[first];while(at('semi')){p++;if(at('eof')||at('rc')||at('rp')||at('rb'))break;es.push(expr())}eat('rc');return es.length===1?first:{k:'seq',es}}
 err('err_unexpected',tk)}
 return program()}
 function runMPL(src,print){const ast=parse(lex(src));const global={vars:new Map(),parent:null};
@@ -145,7 +159,7 @@ case 'forall':{if(f.st===0){f.st=1;push(n.it,sc)}
   else{ret=f.last;K.pop()}}break}
 case 'list':{if(f.st===0){f.es=[];f.st=1;if(!n.es.length){ret=[];K.pop();break}push(n.es[0],sc)}
  else{f.es.push(strip(ret));if(f.es.length<n.es.length)push(n.es[f.es.length],sc);else{ret=f.es;K.pop()}}break}
-}}
+default:rte('err_notyet',n)}}
 return ret}
 const out=strip(ev(ast,global));return show(out)}
 
