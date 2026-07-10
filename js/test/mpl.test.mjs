@@ -121,7 +121,7 @@ test('every palette escape lexes identically to its glyph', () => {
   const glyphProgram = [
     'check ≜ λa, b: ((a ≤ b) ∧ (b ≥ a) ∧ (a ≠ b) ⟹ ✎ "cmp") | ⊥;',
     'check(1, 2);',
-    't ← 0;',
+    't ≜ 0;',   // ruling 16: first binding is ≜ (← still covered by the ∀ line)
     '∀ n ∈ [1, 2, 3]: t ← t + n;',
     '✎(t × 2);',
     '✎(t ÷ 2);',

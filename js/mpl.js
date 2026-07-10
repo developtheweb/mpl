@@ -73,33 +73,80 @@ const showQ=v=>typeof v==='string'?'"'+v+'"':show(v);
    (ruling 7). */
 const fnIn=v=>!!v&&typeof v==='object'&&(v.closure?true:Array.isArray(v)?v.some(fnIn):false);
 const dEq=(a,b)=>isRat(a)&&isRat(b)?R.eq(a,b):Array.isArray(a)&&Array.isArray(b)?a.length===b.length&&a.every((x,ix)=>dEq(x,b[ix])):a===b;
-let steps=0;const strip=v=>v===NOMATCH?BOT:v;
-function ev(n,sc){if(++steps>500000){const e=new Error('err_steps');e.key='err_steps';e.line=n.line||1;e.col=n.col||1;throw e}
+let steps=0,depth=0;const strip=v=>v===NOMATCH?BOT:v;
+/* Explicit-stack machine (ruling 10): the work stack lives on the heap, so
+   recursion is bounded by the λ-application depth counter — limit 10000,
+   err_depth — never by the host stack. No keyless host error is reachable.
+   err_steps (500000 node evaluations) is this implementation's resource
+   limit (ruling 11), counted once per frame like the old per-ev-call count.
+   Guard conditions and ∧ ∨ operands must be boolean — err_bool (rulings
+   13, 14; ∧ ∨ short-circuit, so an unevaluated operand raises nothing).
+   ≜ binds once per scope (err_redef); ← requires an existing binding
+   (err_unbound) — ruling 16. */
+function ev(root,sc0){
+const K=[{n:root,sc:sc0,st:0}];let ret;
+const push=(n,sc)=>{K.push({n,sc,st:0});if(++steps>500000){const e=new Error('err_steps');e.key='err_steps';e.line=n.line||1;e.col=n.col||1;throw e}};
+const bool=(v,n)=>{if(typeof v!=='boolean')rte('err_bool',n);return v};
+const apply=f=>{const fn=f.fn,n=f.n;
+ if(fn.ps.length!==f.args.length)rte('err_arity',n);
+ if(++depth>10000)rte('err_depth',n);
+ const inner={vars:new Map(),parent:fn.sc};fn.ps.forEach((pn,ix)=>inner.vars.set(pn,f.args[ix]));
+ f.st=3;push(fn.body,inner)};
+while(K.length){const f=K[K.length-1],n=f.n,sc=f.sc;
 switch(n.k){
-case 'lit':return n.v;
-case 'id':{const s=lookup(sc,n.v);if(!s)rte('err_undef',n);return s.vars.get(n.v)}
-case 'seq':{let v=BOT;for(const e of n.es){v=ev(e,sc);if(v===NOMATCH)v=BOT}return v}
-case 'def':{const v=strip(ev(n.e,sc));sc.vars.set(n.name,v);return v}
-case 'set':{const v=strip(ev(n.e,sc));const s=lookup(sc,n.name)||sc;s.vars.set(n.name,v);return v}
-case 'alt':{const l=ev(n.l,sc);return l===NOMATCH?ev(n.r,sc):l}
-case 'imp':{const c=strip(ev(n.c,sc));return c===true||(isRat(c)&&c.n!==0n)?ev(n.e,sc):NOMATCH}
-case 'or':{const l=strip(ev(n.l,sc));return l===true?true:strip(ev(n.r,sc))===true}
-case 'and':{const l=strip(ev(n.l,sc));return l===true?strip(ev(n.r,sc))===true:false}
-case 'cmp':{const a=strip(ev(n.l,sc)),b=strip(ev(n.r,sc));
- if(n.o==='eq'||n.o==='neq'){if(fnIn(a)||fnIn(b))rte('err_fn_eq',n);const eq=dEq(a,b);return n.o==='eq'?eq:!eq}
- let d;if(isRat(a)&&isRat(b))d=R.cmp(a,b);else if(typeof a==='string'&&typeof b==='string')d=cmpStr(a,b);else rte('err_compare',n);
- switch(n.o){case 'lt':return d<0;case 'gt':return d>0;case 'leq':return d<=0;case 'geq':return d>=0}}
-case 'bin':{const a=strip(ev(n.l,sc)),b=strip(ev(n.r,sc));switch(n.o){
- case 'plus':return(typeof a==='string'||typeof b==='string')?show(a)+show(b):R.add(num(a,n),num(b,n));
- case 'minus':return R.sub(num(a,n),num(b,n));
- case 'mul':return R.mul(num(a,n),num(b,n));
- case 'divi':{const bb=num(b,n);if(bb.n===0n)rte('err_div0',n);const aa=num(a,n);return rat(aa.n*bb.d,aa.d*bb.n)}}}
-case 'neg':return R.neg(num(strip(ev(n.e,sc)),n));
-case 'trace':{const v=strip(ev(n.e,sc));print(show(v));return v}
-case 'lam':return{closure:true,ps:n.ps,body:n.body,sc};
-case 'call':{const f=strip(ev(n.f,sc));if(!f||!f.closure)rte('err_notfn',n);if(f.ps.length!==n.args.length)rte('err_arity',n);const inner={vars:new Map(),parent:f.sc};f.ps.forEach((pn,ix)=>inner.vars.set(pn,strip(ev(n.args[ix],sc))));return strip(ev(f.body,inner))}
-case 'forall':{const it=strip(ev(n.it,sc));if(!Array.isArray(it))rte('err_iter',n);let v=BOT;for(const x of it){const inner={vars:new Map([[n.v,x]]),parent:sc};v=strip(ev(n.body,inner))}return v}
-case 'list':return n.es.map(e=>strip(ev(e,sc)))}}
+case 'lit':ret=n.v;K.pop();break;
+case 'id':{const s=lookup(sc,n.v);if(!s)rte('err_undef',n);ret=s.vars.get(n.v);K.pop();break}
+case 'lam':ret={closure:true,ps:n.ps,body:n.body,sc};K.pop();break;
+case 'seq':{if(f.st>0)f.last=strip(ret);
+ if(f.st<n.es.length)push(n.es[f.st++],sc);
+ else{ret=n.es.length?f.last:BOT;K.pop()}break}
+case 'def':{if(f.st===0){if(sc.vars.has(n.name))rte('err_redef',n);f.st=1;push(n.e,sc)}
+ else{const v=strip(ret);sc.vars.set(n.name,v);ret=v;K.pop()}break}
+case 'set':{if(f.st===0){const s=lookup(sc,n.name);if(!s)rte('err_unbound',n);f.s=s;f.st=1;push(n.e,sc)}
+ else{const v=strip(ret);f.s.vars.set(n.name,v);ret=v;K.pop()}break}
+case 'alt':{if(f.st===0){f.st=1;push(n.l,sc)}
+ else if(f.st===1){if(ret===NOMATCH){f.st=2;push(n.r,sc)}else K.pop()}
+ else K.pop();break}
+case 'imp':{if(f.st===0){f.st=1;push(n.c,sc)}
+ else if(f.st===1){if(bool(strip(ret),n)){f.st=2;push(n.e,sc)}else{ret=NOMATCH;K.pop()}}
+ else K.pop();break}
+case 'or':case 'and':{const want=n.k==='or';
+ if(f.st===0){f.st=1;push(n.l,sc)}
+ else if(f.st===1){if(bool(strip(ret),n)===want){ret=want;K.pop()}else{f.st=2;push(n.r,sc)}}
+ else{ret=bool(strip(ret),n);K.pop()}break}
+case 'cmp':{if(f.st===0){f.st=1;push(n.l,sc)}
+ else if(f.st===1){f.a=strip(ret);f.st=2;push(n.r,sc)}
+ else{const a=f.a,b=strip(ret);
+  if(n.o==='eq'||n.o==='neq'){if(fnIn(a)||fnIn(b))rte('err_fn_eq',n);const eq=dEq(a,b);ret=n.o==='eq'?eq:!eq}
+  else{let d;if(isRat(a)&&isRat(b))d=R.cmp(a,b);else if(typeof a==='string'&&typeof b==='string')d=cmpStr(a,b);else rte('err_compare',n);
+   ret=n.o==='lt'?d<0:n.o==='gt'?d>0:n.o==='leq'?d<=0:d>=0}
+  K.pop()}break}
+case 'bin':{if(f.st===0){f.st=1;push(n.l,sc)}
+ else if(f.st===1){f.a=strip(ret);f.st=2;push(n.r,sc)}
+ else{const a=f.a,b=strip(ret);
+  if(n.o==='plus')ret=(typeof a==='string'||typeof b==='string')?show(a)+show(b):R.add(num(a,n),num(b,n));
+  else if(n.o==='minus')ret=R.sub(num(a,n),num(b,n));
+  else if(n.o==='mul')ret=R.mul(num(a,n),num(b,n));
+  else{const bb=num(b,n);if(bb.n===0n)rte('err_div0',n);const aa=num(a,n);ret=rat(aa.n*bb.d,aa.d*bb.n)}
+  K.pop()}break}
+case 'neg':{if(f.st===0){f.st=1;push(n.e,sc)}else{ret=R.neg(num(strip(ret),n));K.pop()}break}
+case 'trace':{if(f.st===0){f.st=1;push(n.e,sc)}else{const v=strip(ret);print(show(v));ret=v;K.pop()}break}
+case 'call':{if(f.st===0){f.st=1;push(n.f,sc)}
+ else if(f.st===1){const fn=strip(ret);if(!fn||!fn.closure)rte('err_notfn',n);f.fn=fn;f.args=[];
+  if(n.args.length){f.st=2;push(n.args[0],sc)}else apply(f)}
+ else if(f.st===2){f.args.push(strip(ret));
+  if(f.args.length<n.args.length)push(n.args[f.args.length],sc);else apply(f)}
+ else{depth--;ret=strip(ret);K.pop()}break}
+case 'forall':{if(f.st===0){f.st=1;push(n.it,sc)}
+ else if(f.st===1){const it=strip(ret);if(!Array.isArray(it))rte('err_iter',n);f.it=it;f.i=0;f.st=2;f.last=BOT;
+  if(it.length)push(n.body,{vars:new Map([[n.v,it[f.i++]]]),parent:sc});else{ret=BOT;K.pop()}}
+ else{f.last=strip(ret);
+  if(f.i<f.it.length)push(n.body,{vars:new Map([[n.v,f.it[f.i++]]]),parent:sc});
+  else{ret=f.last;K.pop()}}break}
+case 'list':{if(f.st===0){f.es=[];f.st=1;if(!n.es.length){ret=[];K.pop();break}push(n.es[0],sc)}
+ else{f.es.push(strip(ret));if(f.es.length<n.es.length)push(n.es[f.es.length],sc);else{ret=f.es;K.pop()}}break}
+}}
+return ret}
 const out=strip(ev(ast,global));return show(out)}
 
 if (typeof module !== 'undefined') module.exports = { runMPL, ESCAPES };

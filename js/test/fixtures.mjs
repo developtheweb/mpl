@@ -1,8 +1,8 @@
-// Test fixtures copied verbatim from mpl_codes js/site.js @ 5b50cc0 when
-// the interpreter test suite migrated into this repo. These are the exact
-// programs the site ships; the entries' third field is the site's i18n
-// label key, preserved untouched so nothing about the facts changed in the
-// migration.
+// Test fixtures: the programs mpl.codes ships (originally copied verbatim
+// from mpl_codes js/site.js @ 5b50cc0; the entries' third field is the
+// site's i18n label key). Stage-3 ruling 16 (← requires an existing
+// binding) required changing first bindings in ex2/ex4 from ← to ≜ — the
+// site adopts the same programs in Stage 3 Phase B.
 
 export const SYMBOLS = [
  ['✎','\\trace','sym_trace'],['λ','\\lambda','sym_lambda'],['≜','\\coloneq','sym_def'],
@@ -15,9 +15,9 @@ export const SYMBOLS = [
 
 export const EXERCISES = [
  {t:'ex1_t',d:'ex1_d',lvl:'lvl1',code:'✎ "Hello, World!";\n✎ "Jambo!";\n✎ "你好!";\n✎ "مرحبا!";'},
- {t:'ex2_t',d:'ex2_d',lvl:'lvl1',code:'length ← 5;\nwidth ← 3;\n✎("Area = " + length × width);'},
+ {t:'ex2_t',d:'ex2_d',lvl:'lvl1',code:'length ≜ 5;\nwidth ≜ 3;\n✎("Area = " + length × width);'},
  {t:'ex3_t',d:'ex3_d',lvl:'lvl2',code:'fact ≜ λn: (n ≤ 1 ⟹ 1) | (n × fact(n - 1));\n✎("5! = " + fact(5));'},
- {t:'ex4_t',d:'ex4_d',lvl:'lvl2',code:'total ← 0;\n∀ n ∈ [1, 2, 3, 4, 5]: total ← total + n × n;\n✎("Σ = " + total);'},
+ {t:'ex4_t',d:'ex4_d',lvl:'lvl2',code:'total ≜ 0;\n∀ n ∈ [1, 2, 3, 4, 5]: total ← total + n × n;\n✎("Σ = " + total);'},
  {t:'ex5_t',d:'ex5_d',lvl:'lvl2',code:'even ≜ λn: (n = 0 ⟹ true) | ((n = 1 ⟹ false) | even(n - 2));\n∀ n ∈ [1, 2, 3, 4, 5, 6, 7, 8]: (even(n) ⟹ ✎(n)) | ⊥;'},
  {t:'ex6_t',d:'ex6_d',lvl:'lvl3',code:'twice ≜ λf: λx: f(f(x));\ninc ≜ λn: n + 1;\n✎ twice(inc)(40);'}
 ];
