@@ -86,6 +86,7 @@ public class ParserTest extends MPLTestBase {
         assertParses("pi ≜ 3.14159;");
         assertParses("id ≜ λx: x;");
         assertParses("π ≜ 3.14159;");          // greek letter on the left
+        assertParses("f ≜ λ: 1;");             // ruling 18: nullary λ, bare colon
     }
     
     @Test
@@ -237,9 +238,13 @@ public class ParserTest extends MPLTestBase {
         assertDoesNotParse("x ++ y;");
         assertDoesNotParse("a ** b;");
         
-        // Invalid lambda syntax
-        assertDoesNotParse("λ: x;");
+        // Invalid lambda syntax (λ: x became VALID under ruling 18)
         assertDoesNotParse("λx y: x + y;");
+        // Ruling 25: the parenthesized parameter spelling stays rejected.
+        assertDoesNotParse("λ(a, b): a;");
+        // Ruling 26: λ is reserved — never an identifier.
+        assertDoesNotParse("λ ≜ 3;");
+        assertDoesNotParse("{λ};");
 
         // Juxtaposition application was removed — calls need parentheses
         assertDoesNotParse("f x;");

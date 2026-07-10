@@ -166,9 +166,11 @@ primary
     | list
     ;
 
+// Ruling 26: λ is reserved — never an identifier. Every other Greek
+// letter remains one (Fatima wants π).
 greekVar
     : ALPHA | BETA | GAMMA | DELTA | EPSILON | ZETA | ETA | THETA
-    | IOTA | KAPPA | LAMBDA_VAR | MU | NU | XI | OMICRON | PI
+    | IOTA | KAPPA | MU | NU | XI | OMICRON | PI
     | RHO | SIGMA | TAU | UPSILON | PHI | CHI | PSI | OMEGA
     ;
 
@@ -177,8 +179,9 @@ typeSymbol
     ;
 
 // λx: body   λx,y: body   λx∈ℝ: body — parameters are a bare pattern list.
+// Ruling 18: nullary functions exist — `λ: e` (bare colon) is admitted.
 lambda
-    : LAMBDA_VAR pattern (IN condExpr)? COLON expr
+    : LAMBDA_VAR (pattern (IN condExpr)?)? COLON expr
     ;
 
 forall
@@ -409,9 +412,9 @@ RAWSTRING
     : '"""' .*? '"""'
     ;
 
+// Ruling 12: string escapes are exactly \n \t \" \\ — nothing else.
 fragment ESC
-    : '\\' [\\nrt0"]
-    | '\\u{' [0-9a-fA-F]+ '}'
+    : '\\' [\\nt"]
     ;
 
 // Comments
