@@ -41,6 +41,10 @@ sourceSets {
 }
 
 test {
+    // ConformanceCountTest reads these; declaring them makes the up-to-date
+    // check re-run tests when the README claim or the corpus changes.
+    inputs.file('README.md')
+    inputs.dir('conformance/corpus')
     testLogging {
         events "passed", "skipped", "failed"
         exceptionFormat "full"

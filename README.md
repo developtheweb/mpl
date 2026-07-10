@@ -5,7 +5,7 @@
 
 ![Status](https://img.shields.io/badge/status-proof--of--concept-orange)
 ![Parser](https://img.shields.io/badge/parser-M0-brightgreen)
-![Execution](https://img.shields.io/badge/execution-not--implemented-red)
+![Execution](https://img.shields.io/badge/M0%20core-runs-brightgreen)
 ![License](https://img.shields.io/badge/license-AGPLv3-blue)
 
 **∀ child ∈ world : canCode(child)**
@@ -18,7 +18,7 @@
 
 ## 🚨 Project Status: Proof of Concept
 
-**Important**: MPL is a research prototype. This repository contains the grammar, the parser, and the browser interpreter (`js/mpl.js`) that runs the M0 core today at [mpl.codes](https://mpl.codes). A native runtime beyond the browser core does not exist yet — building it is the next milestone, and contributors are welcome.
+**The M0 core runs — with ratified semantics.** This repository contains the grammar, the parser, and the browser interpreter (`js/mpl.js`) that runs the M0 core today at [mpl.codes](https://mpl.codes). Its semantics are not folklore: every judgment call is recorded and ruled in [conformance/JUDGMENT_CALLS.md](conformance/JUDGMENT_CALLS.md), pinned by **89 ratified conformance tests** that gate CI, and a differential fuzzer holds the interpreter and the grammar to zero divergence. A native runtime beyond the browser core does not exist yet — building it is the next milestone, and contributors are welcome.
 
 ### What Works Today ✅
 
@@ -28,6 +28,7 @@ Every item below is enforced by [CI](.github/workflows/ci.yml) on every push:
 - All 10 [example programs](examples/) parse (`./gradlew parseExamples`)
 - A test suite covering the lexer, the parser, the examples, and every ```` ```mpl ```` code block in this README (`./gradlew test`)
 - An ASCII escape sequence for every Unicode symbol ([glyph-escapes.md](glyph-escapes.md))
+- The M0 core executes with ratified semantics: 89 ratified conformance tests (`node conformance/harness/run.mjs --ratified`), exact rational arithmetic, and a recorded ruling for every semantic question ([conformance/JUDGMENT_CALLS.md](conformance/JUDGMENT_CALLS.md))
 
 ### What Doesn't Work Yet 🚧
 - **No native runtime** - The M0 core runs in the browser interpreter (`js/mpl.js`); everything beyond it parses but does not run yet
@@ -203,14 +204,14 @@ Only ASCII escapes exist today; the rest is the tooling we want to build:
 
 ```mpl
 -- Level 1: Basic math (everyone knows this!)
-x ← 5 + 3;
-y ← x × 2;
+x ≜ 5 + 3;
+y ≜ x × 2;
 
 -- Level 2: Logic (learned in school)
 x > 10 ∧ y < 20 ⟹ ✎"Success!";
 
 -- Level 3: Advanced (natural progression)
-squares ← 0;
+squares ≜ 0;
 ∀ n ∈ [1, 2, 3, 4, 5] : squares ← squares + n × n;
 ```
 
@@ -265,10 +266,10 @@ We envision students could progress like this:
 **Growing skills**: Applying math knowledge to programming
 ```mpl
 -- Month 6: Using mathematical concepts they know
-data ← [23, 45, 67, 34, 89, 12];
-total ← 0;
+data ≜ [23, 45, 67, 34, 89, 12];
+total ≜ 0;
 ∀ x ∈ data : total ← total + x;
-average ← total ÷ 6;
+average ≜ total ÷ 6;
 ✎("Average: " + average)
 ```
 
@@ -291,13 +292,13 @@ Some notation you might expect from math class — ∑, √, ², `%` (modulo), |
 
 ```mpl
 -- Store values (like math class!)
-length ← 5;
-width ← 3;
-area ← length × width;
+length ≜ 5;
+width ≜ 3;
+area ≜ length × width;
 ✎("Area = " + area);
 
 -- Make decisions: (condition ⟹ result) | fallback
-age ← 15;
+age ≜ 15;
 (age ≥ 18 ⟹ ✎"Adult") | ✎"Minor";
 ```
 
@@ -309,7 +310,7 @@ age ← 15;
 ∀ n ∈ [1, 2, 3, 4, 5] : ✎(n × n);
 
 -- Accumulate a running total
-total ← 0;
+total ≜ 0;
 ∀ n ∈ [1, 2, 3, 4, 5] : total ← total + n;
 ✎("Total: " + total);
 ```
@@ -319,14 +320,14 @@ total ← 0;
 
 ```mpl
 -- Weather data analysis
-temperatures ← [28, 30, 27, 31, 29, 33, 28];
-total ← 0;
+temperatures ≜ [28, 30, 27, 31, 29, 33, 28];
+total ≜ 0;
 ∀ t ∈ temperatures : total ← total + t;
-μ ← total ÷ 7;
+μ ≜ total ÷ 7;
 ✎("Average: " + μ + "°C");
 
 -- Parallel processing (‖ = parallel)
-results ← analyzeNorth() ‖ analyzeSouth() ‖ analyzeEast();
+results ≜ analyzeNorth() ‖ analyzeSouth() ‖ analyzeEast();
 ```
 
 ### Level 4: Advanced concepts 🚀
