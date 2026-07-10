@@ -84,6 +84,26 @@ parser rule** — any use is `err_expect`.
 - Deep recursion overflows the host stack **before** the step budget —
   a keyless RangeError, unpinnable by the corpus (see JUDGMENT_CALLS).
 
+## Grammar-only surface (no ruling, Stage 4+ material)
+
+The grammar accepts these; the Stage-3 interpreter does not. No ruling
+covers them and the fuzzer's generator does not emit them — they are on
+the record here so the gap is a listed fact, not a surprise:
+
+- `≈` (APPROX) and `∼` (SIM) comparison operators — interpreter: `err_char`.
+- `"""raw strings"""` (RAWSTRING) — interpreter: `err_char` at the second
+  quote pair's content or `err_string`/`err_expect` depending on context.
+- Hex (`0x1F`), binary (`0b101`) and exponent (`1.5e3`) number literals —
+  interpreter lexes the leading digits as a plain number and fails to
+  parse the rest (`err_expect`).
+- `_` as a λ pattern (patternAtom UNDERSCORE) — interpreter: `err_char`.
+
+Dead key: `err_comment` can no longer be raised — since the comment lexer
+matched the grammar (a `{-` without its `-}` is a brace, not an
+unterminated comment), no code path produces it. It stays in the error-key
+list pending removal at the next legitimate interpreter change (no hash
+churn for hygiene alone).
+
 ## Explicitly out of corpus scope
 
 - `‖` — parses, and the evaluator runs it as plain sequencing, but its
